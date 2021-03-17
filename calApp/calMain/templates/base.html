@@ -1,0 +1,24 @@
+{% extends "./home.html" %}
+{% block home %}
+
+<div class="wrapper row2">
+  <div id="breadcrumb" class="hoc clear"> 
+    {% block index %}
+    {% endblock %}
+  </div>
+</div>
+<div class="wrapper row3">
+  <main class="hoc container clear"> 
+    <div class="content"> 
+      {% block foodgallery %}
+      {% endblock %}
+      <div id="comments">
+        {% block account %}
+        {% endblock %}
+      </div>
+    </div>
+    <div class="clear"></div>
+  </main>
+</div>
+
+{% endblock %}

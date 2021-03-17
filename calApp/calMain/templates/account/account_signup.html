@@ -1,0 +1,54 @@
+{% extends "../base.html" %}
+{% block index %}
+<ul>
+    <li><a href="{% url 'index' %}">Home</a></li>
+    <li><a href="{% url 'account' %}">sign up</a></li>
+</ul>
+{% endblock %}
+{% block account %}
+<h2>sign up</h2>
+<form action="../signup/" method="post">
+    {% csrf_token %}
+    <label for="id">id <span>*</span></label>
+    <div class="three_quarter first">
+        <input type="text" name="id" id="id" value="" size="22" required>
+    </div>
+    <div class="one_half first">
+        <label for="password">password <span>*</span></label>
+        <input type="password" name="password" id="password" value="" size="22" required>
+    </div>
+    <div class="one_half first">
+        <label for="name">Name <span>*</span></label>
+        <input type="text" name="name" id="name" value="" size="22" required>
+    </div>
+    <div class="one_half">
+        <label for="sex">sex <span>*</span></label>
+        <select name="sex" style="height: 100%; width: 100%;">
+        <option value="male" selected="selected">남</option>
+        <option value="female" >여</option>
+        </select>
+    </div>
+    <div class="one_half first">
+        <label for="email">Mail <span>*</span></label>
+        <input type="email" name="email" id="email" value="" size="22" required>
+    </div>
+    <div class="one_third first">
+        <label for="url">birth</label>
+        <input type="date" name="date" id="date" value="2000-01-01">
+    </div>
+    <div class="one_half first">
+        <label for="weidth">weidth</label>
+        <input type="text" name="weidth" class="int" id="weidth" value="" maxlength="3" placeholder="소수점 한자리까지">
+    </div>
+    <div class="one_half">
+        <label for="height">height<span>*</span></label>
+        <input type="text" name="height" class="int" id="height" value="" maxlength="3" placeholder="소수점 한자리까지">
+    </div>
+    <div class="block clear">
+    </div>
+    <div>
+        <input type="submit" name="submit">
+    </div>
+</form>
+{% endblock %}
+

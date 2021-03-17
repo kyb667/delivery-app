@@ -1,0 +1,34 @@
+{% extends "../base.html" %}
+{% load mathfilters %}
+{% block foodgallery %}
+
+<div id="gallery">
+  {% if recipeList %}
+  <figure>
+    <header class="heading">Gallery Title Goes Here</header>
+    <ul class="nospace clear">
+      {% for i in recipeList %}
+      {{ i }}
+      <li class="one_quarter {% if forloop.counter|mod:4 == 1 %}first{% endif %}">
+        <a href=""><img src="{{ i.recipeimage }}" alt=""></a>
+      <div><a href="">{{ i.recipename }}</a></div></li>
+      {% endfor %}
+    </ul>
+  </figure>
+  {% endif %}
+</div>
+
+<nav class="pagination">
+  <ul>
+    <li><a href="{{ index|sub:1 }}">&laquo; Previous</a></li>
+    {% for i in range %}
+    <li class=" {% if i == index %}current{% endif %}">
+      <a href="">{{ i }}</a>
+    </li>
+    {% endfor %}
+    <!-- TODO 맨마지막일때 처리 -->
+    <li><a href="{{ index|add:1 }}">Next &raquo;</a></li>
+  </ul>
+</nav>
+
+{% endblock %}
