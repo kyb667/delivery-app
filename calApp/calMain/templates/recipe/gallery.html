@@ -1,34 +1,118 @@
 {% extends "../base.html" %}
+{% load static %}
 {% load mathfilters %}
-{% block foodgallery %}
-
-<div id="gallery">
-  {% if recipeList %}
-  <figure>
-    <header class="heading">Gallery Title Goes Here</header>
-    <ul class="nospace clear">
-      {% for i in recipeList %}
-      {{ i }}
-      <li class="one_quarter {% if forloop.counter|mod:4 == 1 %}first{% endif %}">
-        <a href=""><img src="{{ i.recipeimage }}" alt=""></a>
-      <div><a href="">{{ i.recipename }}</a></div></li>
-      {% endfor %}
+{% block index %}
+    <ul>
+      <li><a href="#">Home</a></li>
+      <li><a href="#">recipe</a></li>
     </ul>
-  </figure>
-  {% endif %}
-</div>
+{% endblock %}
 
-<nav class="pagination">
-  <ul>
-    <li><a href="{{ index|sub:1 }}">&laquo; Previous</a></li>
-    {% for i in range %}
-    <li class=" {% if i == index %}current{% endif %}">
-      <a href="">{{ i }}</a>
-    </li>
-    {% endfor %}
-    <!-- TODO 맨마지막일때 처리 -->
-    <li><a href="{{ index|add:1 }}">Next &raquo;</a></li>
-  </ul>
-</nav>
+{% block recipegroup %}
+<!-- <div class="heading"> 조건검색 </div> -->
 
+{% endblock %}
+
+{% block foodgallery %}
+  <div id="comments">
+    <figure>
+      <ul id="">
+        <li>
+          <article>
+            <header>
+              <address> By <a href="#"> 조건검색 </a>
+              </address> 
+            </header>
+            <div class="comcont">
+              <nav class="pagination">
+                <ul>
+                  <li>
+                    <a class="current" id="selectrecipegroup">
+                      국가별
+                    </a>
+                  </li>
+                  <li>
+                    <a class="current" id="selectrecipetype">
+                      종류별
+                    </a>
+                  </li>
+                  <li>
+                    <a class="current" id="selectrecipelevel">
+                      난이도별
+                    </a>
+                  </li>
+                  <li>
+                    <a class="current" id="selectrecipecookingtime">
+                      시간별
+                    </a>
+                  </li>
+                </ul>
+                <ul id="sortable" ondrop="drop(event)" ondragover="allowDrop(event)" >
+                  {% for i in recipegroups %}
+                  <li draggable="true" ondragstart="drag(event)">
+                    <a class="current" href="" id="{{ i.recipegroup }}" ondrop="drop(event)" ondragover="allowDrop(event)" draggable="true" ondragstart="drag(event)" >
+                      {{ i.recipegroup }} 
+                    </a>
+                  </li>
+                  {% endfor %}
+                </ul>
+              </nav>
+            </div>
+          </article>
+        </li>
+      </ul>
+    </figure>
+  </div>
+  <div id="comments">
+    <figure>
+      <ul class="selectrecipe" id="recipegroup">
+        <li>
+          <article>
+            <header>
+              <figure class="avatar" id="selectrecipe">
+                <i class="fa fa-map-marker"></i>
+              </figure>
+              <address><a> 끌어서 검색</a>
+              </address> 
+            </header>
+            <div class="comcont" id="div1" ondrop="drop(event)" ondragover="allowDrop(event)" style="min-height:20px;">
+            </div>
+          </article>
+        </li>
+      </ul>
+    </figure>
+  </div>
+
+  <div id="gallery">
+    {% if recipeList %}
+    <figure>
+      <header class="heading">recipe</header>
+      <ul class="nospace clear">
+        {% for i in recipeList %}
+        <!-- {{ i }} -->
+        <li class="one_quarter {% if forloop.counter|mod:4 == 1 %}first{% endif %}">
+          <a href=""><img src="{{ i.recipeimage }}" alt=""></a>
+        <div><a href="">{{ i.recipename }}</a></div>
+        <div>{{ i.recipesummary }}</div></li>
+        {% endfor %}
+      </ul>
+    </figure>
+    {% endif %}
+  </div>
+
+  <nav class="pagination">
+    <ul>
+      <li><a href="{{ index|sub:1 }}">&laquo; Previous</a></li>
+      {% for i in range %}
+      <li class=" {% if i == index %}current{% endif %}">
+        <a href="{% url 'recipe' i %}">{{ i }}</a>
+      </li>
+      {% endfor %}
+      <!-- TODO 맨마지막일때 처리 -->
+      <li><a href="{{ index|add:1 }}">Next &raquo;</a></li>
+    </ul>
+  </nav>
+  
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="{% static 'maxisonix/ajax/recipe.js' %}"></script>
 {% endblock %}

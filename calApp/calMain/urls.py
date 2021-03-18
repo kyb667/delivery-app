@@ -51,8 +51,15 @@ urlpatterns = [
 
     # 마이페이지
 
-    path('recipe/', recipe.index, name='recipe'),
     # 도시락 레시피
+    path('recipe/', recipe.index, name='recipe'),
+    path('recipe/<int:pages>/', recipe.index, name='recipe'),
+    path('recipe/getRecipeGroups/', recipe.getRecipeGroups, name='getRecipeGroups'),
+    path('recipe/getRecipeTimes/', recipe.getRecipeTimes, name='getRecipeTimes'),
+    path('recipe/getRecipeLevels/', recipe.getRecipeLevels, name='getRecipeLevels'),
+    path('recipe/getRecipeTypes/', recipe.getRecipeTypes, name='getRecipeTypes'),
+    path('recipe/select/', recipe.select, name='select'),
+
 
     # 다이어트 식품 파는 곳
 

@@ -4,34 +4,77 @@ import bcrypt
 import json
 from django.views.decorators.csrf import csrf_exempt
 from ..models import recipe, member, recipedetail
-from django.db.models import F
+from django.db.models import F, Count
 from datetime import datetime
 from django.core.serializers.json import DjangoJSONEncoder
 import requests
 
-galleryNum = 24
+galleryNum = 16
 
 
-def index(request, index=1):
+def index(request, pages=1):
     recipeList = recipe.objects.all().values()[(
-        index-1)*galleryNum:galleryNum*(index+9)]
-    print(recipeList)
+        pages-1)*galleryNum:galleryNum*(pages+9)]
+
+    recipegroups = recipe.objects.values(
+        'recipegroup').annotate(count=Count('recipeid'))
+    recipegroups = [dict(i) for i in recipegroups]
     if recipeList:
         indexNum = int(len(recipeList)/galleryNum)
         maxIndex = indexNum + 1
         minIndex = 1
         # 끝번호
         if indexNum < 10:
-            maxIndex = indexNum + index + 1
+            maxIndex = indexNum + pages + 1
             minIndex = maxIndex - 10
-            return render(request, 'recipe/gallery.html', {'recipeList': recipeList[:galleryNum], 'range': range(minIndex, maxIndex), 'index': index})
+            return render(request, 'recipe/gallery.html', {'recipeList': recipeList[:galleryNum], 'range': range(minIndex, maxIndex), 'index': pages, 'recipegroups': recipegroups})
         # 나머지번호
-        if index >= 6:
-            minIndex = index - 4
-            maxIndex = index + 6
-        return render(request, 'recipe/gallery.html', {'recipeList': recipeList[:galleryNum], 'range': range(minIndex, maxIndex), 'index': index})
+        if pages >= 6:
+            minIndex = pages - 4
+            maxIndex = pages + 6
+        return render(request, 'recipe/gallery.html', {'recipeList': recipeList[:galleryNum], 'range': range(minIndex, maxIndex), 'index': pages, 'recipegroups': recipegroups})
 
     return redirect('index')
+
+
+def getRecipeGroups(reqeust):
+    recipegroups = recipe.objects.values(
+        'recipegroup').annotate(count=Count('recipeid'))
+    recipegroups = [dict(i) for i in recipegroups]
+    return JsonResponse({'recipegroups': recipegroups})
+
+
+def getRecipeLevels(reqeust):
+    recipelevel = recipe.objects.values(
+        'recipelevel').annotate(count=Count('recipeid'))
+    recipelevel = [dict(i) for i in recipelevel]
+    return JsonResponse({'recipelevel': recipelevel})
+
+
+def getRecipeTypes(reqeust):
+    recipetypes = recipe.objects.values(
+        'recipetype').annotate(count=Count('recipeid'))
+    recipetypes = [dict(i) for i in recipetypes]
+    return JsonResponse({'recipetypes': recipetypes})
+
+
+def getRecipeTimes(reqeust):
+    recipecookingtime = recipe.objects.values(
+        'recipecookingtime').annotate(count=Count('recipeid'))
+    recipecookingtime = [dict(i) for i in recipecookingtime]
+    return JsonResponse({'recipecookingtime': recipecookingtime})
+
+
+def select(reqeust):
+    if reqeust.method == 'POST':
+        print(reqeust.POST)
+        selectList = reqeust.POST['selectList']
+        group = reqeust.POST['group']
+        print(selectList)
+        print(group)
+        a = recipe.objects.filter(recipegroup__in=group)
+        print(a)
+    return JsonResponse({'data': None})
 
     # url = 'http://211.237.50.150:7080/openapi/6afee659d62f1611245ada0ea9202bdb65c62ba8ab3e0b995e70398bd8268acd/json/Grid_20150827000000000226_1/1001/2000'
     # response = requests.get(url)
