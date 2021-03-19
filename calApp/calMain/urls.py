@@ -53,7 +53,6 @@ urlpatterns = [
 
     # 도시락 레시피
     path('recipe/', recipe.index, name='recipe'),
-    path('recipe/<int:pages>/', recipe.index, name='recipe'),
     path('recipe/getRecipeGroups/', recipe.getRecipeGroups, name='getRecipeGroups'),
     path('recipe/getRecipeTimes/', recipe.getRecipeTimes, name='getRecipeTimes'),
     path('recipe/getRecipeLevels/', recipe.getRecipeLevels, name='getRecipeLevels'),

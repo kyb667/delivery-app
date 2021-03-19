@@ -1,3 +1,7 @@
+var allRecipeList;
+var index = 1;
+var maxIndex = 1;
+
 function allowDrop(ev){
     ev.preventDefault();
 };
@@ -10,6 +14,7 @@ function drop(ev){
     ev.target.appendChild(document.getElementById(data));
 };
 $('#selectrecipegroup').click(function(){
+    console.log(nextPageNum)
     $('#sortable').empty();
     $.ajax({
         url:"./getRecipeGroups/",
@@ -27,7 +32,7 @@ $('#selectrecipegroup').click(function(){
                         info.recipegroup + '</a></li>'
             }
             ul.innerHTML = html;
-            div.innerHTML = '<br/>';
+            div.innerHTML = '';
         }
     })
 });
@@ -49,7 +54,7 @@ $('#selectrecipetype').click(function(){
                         info.recipetype + '</a></li>'
             }
             ul.innerHTML = html;
-            div.innerHTML = '<br/>';
+            div.innerHTML = '';
         }
     })
 });
@@ -71,7 +76,7 @@ $('#selectrecipelevel').click(function(){
                         info.recipelevel + '</a></li>'
             }
             ul.innerHTML = html;
-            div.innerHTML = '<br/>';
+            div.innerHTML = '';
         }
     })
 });
@@ -93,7 +98,7 @@ $('#selectrecipecookingtime').click(function(){
                         info.recipecookingtime + '</a></li>'
             }
             ul.innerHTML = html;
-            div.innerHTML = '<br/>';
+            div.innerHTML = '';
         }
     })
 });
@@ -103,7 +108,6 @@ function getCookie(name) {
         const cookies = document.cookie.split(';');
         for (let i = 0; i < cookies.length; i++) {
             const cookie = cookies[i].trim();
-            // Does this cookie string begin with the name we want?
             if (cookie.substring(0, name.length + 1) === (name + '=')) {
                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                 break;
@@ -112,22 +116,156 @@ function getCookie(name) {
     }
     return cookieValue;
 }
+function selectRecipe(selectList, group){
+    console.log(456)
+    var token = getCookie('csrftoken');
+    $.ajax({
+        headers: { "X-CSRFToken": token },
+        type:'POST',
+        url:'./select/',
+        data: {'selectList' : selectList , 'group' :group},
+        dataType: 'json',
+        async:false,
+        success : function(data){
+            recipeList = data['data']
+            allRecipeList = data['data']
+            console.log(recipeList)
+            $('#show_recipe_list').empty();
+            $('#chage_recipe').empty();
+            show_ul = document.querySelector('#show_recipe_list')
+            show_html = ''
+            chage_ul = document.querySelector('#chage_recipe')
+            chage_html = ''
+            var len = recipeList.length
+            var maxPage = Math.floor(len / 16)
+            var minPage = len % 16
+            if (len > 16){ len = 16 }
+            for (var i = 0; i < len; i++){
+                info = recipeList[i]
+                css = i + 1
+                first = ''
+                if (css % 4 == 1){ first = 'first' }
+                console.log(info)
+                show_html += '<li class="one_quarter ' + first +'">' +
+                        '<a href=""><img src="' + info.recipeimage + '" alt=""></a>' +
+                        '<div><a href="">' + info.recipename + '</a></div>' +
+                        '<div>' + info.recipesummary + '</div></li>'
+                console.log(show_html)
+            }
+            show_ul.innerHTML = show_html;
+            if (minPage > 0){ maxPage += 1 }
+            maxIndex = maxPage
+            if (maxPage > 11){ maxPage = 11 }
+            chage_html += '<li id="backPage"><a>&laquo; Previous</a></li>'
+            for ( var i = 1; i < maxPage; i ++){
+                var css = ''
+                if (i == 1){ css = 'current' }
+                chage_html += '<li class="showPage ' + css +'" data-id="' + i +'">' +
+                                ' <a>' + i +'</a>' +
+                                '</li>'
+            }
+            chage_html += '<li id="nextPage"><a>Next &raquo;</a></li>'
+            chage_ul.innerHTML = chage_html;
+        }
+    })
+}
 $('#selectrecipe').click(function(){
     var selectList = document.getElementById('div1').innerText
     if (selectList != ""){
-        var res = selectList.split(" ");
-        var token = getCookie('csrftoken');
         var x = document.getElementsByClassName("selectrecipe");
-        var group = x[0].id
-        $.ajax({
-            headers: { "X-CSRFToken": token },
-            type:'POST',
-            url:'./select/',
-            data: JSON.stringify({'selectList': res, 'group':group}),
-            dataType: 'json',
-            success : function(data){
-                console.log(data)
-            }
-        })
+        selectRecipe(selectList, x[0].id)
     }
+});
+function showRecipe(num){
+    if (allRecipeList){
+        $('#show_recipe_list').empty();
+        $('#chage_recipe').empty();
+        show_ul = document.querySelector('#show_recipe_list')
+        chage_ul = document.querySelector('#chage_recipe')
+        show_html = ''
+        chage_html = ''
+        var listLen = allRecipeList.length
+        var len = 16 * (num -1)
+        var show_max = 16 * (num)
+        if (show_max > listLen){
+            show_max = listLen
+        }
+        for (var i = len; i < show_max ; i ++){
+            info = recipeList[i]
+            css = i + 1
+            first = ''
+            if (css % 4 == 1){ first = 'first' }
+            show_html += '<li class="one_quarter ' + first +'">' +
+            '<a href=""><img src="' + info.recipeimage + '" alt=""></a>' +
+            '<div><a href="">' + info.recipename + '</a></div>' +
+            '<div>' + info.recipesummary + '</div></li>'
+        }
+        var maxPage = maxIndex
+        var minPage = num - 3
+        // 맨뒷자리
+        if (num == maxIndex){
+            minPage = num - 9
+            maxPage = num
+        }else{
+            // 뒷자리 체크
+            if (maxPage - num < 6){
+                a = 6 - (maxIndex - num)
+                minPage -= a
+            }else{
+                console.log('-----')
+                console.log(minPage)
+                console.log(maxPage)
+                // 앞자리 체크
+                if (num <= 4){
+                    minPage = 1
+                    maxPage = 10
+                }
+                else{
+                    if(num + 5 < maxPage){
+                        maxPage = num + 5
+                    }
+                } 
+                console.log('-----')
+                console.log(minPage)
+                console.log(maxPage)
+            }
+        }
+        chage_html += '<li id="backPage"><a>&laquo; Previous</a></li>'
+        for (var i = minPage; i <= maxPage; i++){
+            var css = ''
+            if (i == num){ css = 'current' }
+            chage_html += '<li class="showPage ' + css +'" data-id="' + i +'">' +
+                            ' <a>' + i +'</a>' +
+                            '</li>'
+        }
+        chage_html += '<li id="nextPage"><a>Next &raquo;</a></li>'
+        show_ul.innerHTML = show_html;
+        chage_ul.innerHTML = chage_html;
+    }else{
+        selectRecipe('', 'all')
+    }
+    
+}
+$(document).on("click", ".showPage", function(){
+    var num = $(this).data('id')
+    index = num
+    showRecipe(index)
+});
+$(document).on("click", "#backPage", function(){
+    if (index > 1){
+        index -= 1
+        showRecipe(index)
+    }
+});
+$(document).on("click", "#nextPage", function(){
+    if (index + 1 <= maxIndex){
+        index += 1
+        showRecipe(index)
+    }
+});
+
+$(function(){
+    console.log(123)
+    selectRecipe('', 'all')
 })
+

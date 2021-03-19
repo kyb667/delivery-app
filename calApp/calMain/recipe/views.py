@@ -12,29 +12,8 @@ import requests
 galleryNum = 16
 
 
-def index(request, pages=1):
-    recipeList = recipe.objects.all().values()[(
-        pages-1)*galleryNum:galleryNum*(pages+9)]
-
-    recipegroups = recipe.objects.values(
-        'recipegroup').annotate(count=Count('recipeid'))
-    recipegroups = [dict(i) for i in recipegroups]
-    if recipeList:
-        indexNum = int(len(recipeList)/galleryNum)
-        maxIndex = indexNum + 1
-        minIndex = 1
-        # 끝번호
-        if indexNum < 10:
-            maxIndex = indexNum + pages + 1
-            minIndex = maxIndex - 10
-            return render(request, 'recipe/gallery.html', {'recipeList': recipeList[:galleryNum], 'range': range(minIndex, maxIndex), 'index': pages, 'recipegroups': recipegroups})
-        # 나머지번호
-        if pages >= 6:
-            minIndex = pages - 4
-            maxIndex = pages + 6
-        return render(request, 'recipe/gallery.html', {'recipeList': recipeList[:galleryNum], 'range': range(minIndex, maxIndex), 'index': pages, 'recipegroups': recipegroups})
-
-    return redirect('index')
+def index(request):
+    return render(request, 'recipe/gallery.html')
 
 
 def getRecipeGroups(reqeust):
@@ -68,13 +47,26 @@ def getRecipeTimes(reqeust):
 def select(reqeust):
     if reqeust.method == 'POST':
         print(reqeust.POST)
-        selectList = reqeust.POST['selectList']
+        selectList = reqeust.POST['selectList'].split(' ')
         group = reqeust.POST['group']
-        print(selectList)
-        print(group)
-        a = recipe.objects.filter(recipegroup__in=group)
-        print(a)
-    return JsonResponse({'data': None})
+        if selectList:
+            if group == 'recipegroup':
+                recipeList = recipe.objects.filter(
+                    recipegroup__in=selectList).values()
+            elif group == 'recipetype':
+                recipeList = recipe.objects.filter(
+                    recipetype__in=selectList).values()
+            elif group == 'recipelevel':
+                recipeList = recipe.objects.filter(
+                    recipelevel__in=selectList).values()
+            elif group == 'recipetime':
+                recipeList = recipe.objects.filter(
+                    recipecookingtime__in=selectList).values()
+            else:
+                recipeList = recipe.objects.all().values()
+            recipeList = [dict(i) for i in recipeList]
+            print(recipeList)
+            return JsonResponse({'data': recipeList})
 
     # url = 'http://211.237.50.150:7080/openapi/6afee659d62f1611245ada0ea9202bdb65c62ba8ab3e0b995e70398bd8268acd/json/Grid_20150827000000000226_1/1001/2000'
     # response = requests.get(url)
