@@ -7,9 +7,9 @@ from ..models import member
 
 
 def checkid(request):
-    memberid = request.GET.get('memberid', None)
+    memberid = request.GET.get('id', None)
     data = {
-        'check': member.objects.filter(memberid=memberid).exists()
+        'check': member.objects.filter(id=memberid).exists()
     }
     return JsonResponse(data)
 
@@ -17,16 +17,16 @@ def checkid(request):
 def signup(request):
     if request.method == 'POST':
         body = {}
-        body['memberid'] = request.POST['id']
+        body['id'] = request.POST['id']
         pw = request.POST['password']
-        body['memberpw'] = bcrypt.hashpw(
+        body['pw'] = bcrypt.hashpw(
             pw.encode('utf-8'), bcrypt.gensalt()).decode()
-        body['membername'] = request.POST['name']
-        body['membergender'] = request.POST['sex']
-        body['memberemail'] = request.POST['email']
-        body['memberbirth'] = request.POST['date']
-        body['memberheight'] = int(request.POST['height'])
-        body['memberweight'] = int(request.POST['weidth'])
+        body['name'] = request.POST['name']
+        body['email'] = request.POST['email']
+        # TODO postcode phone address
+        body['postcode'] = int(request.POST['height'])
+        body['phone'] = int(request.POST['weidth'])
+        body['address'] = request.POST['address']
         member.objects.create(**body)
         return render(request, 'index.html')
 
@@ -35,9 +35,8 @@ def signin(request):
     if request.method == 'POST':
         login_id = request.POST['login_id']
         login_pw = request.POST['login_password']
-        user = member.objects.filter(memberid=login_id).values()
+        user = member.objects.filter(id=login_id).values()
         user = [dict(i) for i in user][0]
-        print(user)
         if user and bcrypt.checkpw(login_pw.encode(), user['memberpw'].encode()):
             request.session['name'] = user['memberid']
             return redirect('index')

@@ -4,7 +4,7 @@ $("#id").change(function(){
     $.ajax({
       url:'../ajax/checkid/',
       data:{
-        'memberid' : user_id
+        'id' : user_id
       },
       dataType: 'json',
       success: function(data){

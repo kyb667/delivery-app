@@ -15,7 +15,6 @@ Including another URLconf
 """
 from . import views
 from .user import views as user
-from .food import views as food
 from .board import views as board
 from .recipe import views as recipe
 from django.urls import path
@@ -31,36 +30,17 @@ urlpatterns = [
     path('signin/', user.signin, name='signin'),
     path('signout/', user.signout, name='signout'),
 
-    # food
-    path('food/', food.gal, name='food'),
-    # 음식 페이징
-    path('food/<int:index>/', food.gal, name='food'),
-    # 음식 세부
-    path('food/detail/<int:foodnum>/', food.detail, name='fooddetail'),
-    # 음식 좋아요 싫어요
-    path('food/detail/getlovenum/<int:foodnum>/',
-         food.getlovenum, name='getlovenum'),
-
     # board
-    # 음식 댓글 추가
     path('comment/<int:foodid>/', board.create_comment, name='comment'),
     # 댓글 좋아요 싫어요
     path('comment/reaction/', board.comment_up, name='comment_up'),
 
-    # 대댓글 기능
-
-    # 마이페이지
-
-    # 도시락 레시피
     path('recipe/', recipe.index, name='recipe'),
-    path('recipe/getRecipeGroups/', recipe.getRecipeGroups, name='getRecipeGroups'),
-    path('recipe/getRecipeTimes/', recipe.getRecipeTimes, name='getRecipeTimes'),
-    path('recipe/getRecipeLevels/', recipe.getRecipeLevels, name='getRecipeLevels'),
+    path('recipe/getRecipeNames/<str:name>/',
+         recipe.getRecipeNames, name='getRecipeNames'),
     path('recipe/getRecipeTypes/', recipe.getRecipeTypes, name='getRecipeTypes'),
     path('recipe/select/', recipe.select, name='select'),
-
-
-    # 다이어트 식품 파는 곳
-
-
+    path('recipe/<str:name>/', recipe.detailRecipe, name='detailRecipe'),
+    path('showrecipe/<str:recipename>_<str:id>/',
+         recipe.showRecipeDetail, name='showRecipeDetail'),
 ]

@@ -8,75 +8,24 @@
     </ul>
 {% endblock %}
 
-{% block recipegroup %}
-<!-- <div class="heading"> 조건검색 </div> -->
-
-{% endblock %}
-
 {% block foodgallery %}
   <div id="comments">
     <figure>
-      <ul id="">
-        <li>
-          <article>
+      <ul>
+        <li style="background-color: white;">
+          <article id="direct_search">
             <header>
-              <address> By <a href="#"> 조건검색 </a>
+              <address> By <a id="direct_search_btn"> 직접검색 <i id="direct_search_btn_css" class="fa fa-chevron-down"></i> </a> 
               </address> 
             </header>
-            <div class="comcont">
-              <nav class="pagination">
-                <ul>
-                  <li>
-                    <a class="current" id="selectrecipegroup">
-                      국가별
-                    </a>
-                  </li>
-                  <li>
-                    <a class="current" id="selectrecipetype">
-                      종류별
-                    </a>
-                  </li>
-                  <li>
-                    <a class="current" id="selectrecipelevel">
-                      난이도별
-                    </a>
-                  </li>
-                  <li>
-                    <a class="current" id="selectrecipecookingtime">
-                      시간별
-                    </a>
-                  </li>
-                </ul>
-                <ul id="sortable" ondrop="drop(event)" ondragover="allowDrop(event)" >
-                  {% for i in recipegroups %}
-                  <li draggable="true" ondragstart="drag(event)">
-                    <a class="current" id="{{ i.recipegroup }}" ondrop="drop(event)" ondragover="allowDrop(event)" draggable="true" ondragstart="drag(event)" >
-                      {{ i.recipegroup }} 
-                    </a>
-                  </li>
-                  {% endfor %}
-                </ul>
-              </nav>
-            </div>
           </article>
         </li>
-      </ul>
-    </figure>
-  </div>
-  <div id="comments">
-    <figure>
-      <ul class="selectrecipe" id="recipegroup">
-        <li>
-          <article>
+        <li style="background-color: white;">
+          <article id="condition_search">
             <header>
-              <figure class="avatar" id="selectrecipe">
-                <i class="fa fa-map-marker"></i>
-              </figure>
-              <address><a> 끌어서 검색</a>
+              <address> By <a id="condition_search_btn"> 조건검색 <i id="condition_search_btn_css" class="fa fa-chevron-down"></i> </a>
               </address> 
             </header>
-            <div class="comcont" id="div1" ondrop="drop(event)" ondragover="allowDrop(event)" style="min-height:20px;">
-            </div>
           </article>
         </li>
       </ul>
@@ -98,4 +47,5 @@
   
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="{% static 'maxisonix/ajax/recipe.js' %}"></script>
-{% endblock %}
+  
+{% endblock %} -->

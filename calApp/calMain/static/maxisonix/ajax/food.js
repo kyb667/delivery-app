@@ -2,7 +2,6 @@
 $('#likeit').on('click',function(){
     var id = $(this).data("id")
     $.ajax({
-        // url:'{% url getlovenum foodid %}',
         url:'../getlovenum/'+ id + '/',
         dataType: 'json',
         success: function(data){
@@ -16,7 +15,6 @@ function getCookie(name) {
         const cookies = document.cookie.split(';');
         for (let i = 0; i < cookies.length; i++) {
             const cookie = cookies[i].trim();
-            // Does this cookie string begin with the name we want?
             if (cookie.substring(0, name.length + 1) === (name + '=')) {
                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                 break;
@@ -33,7 +31,6 @@ $('#comment_submit').click(function(){
     $.ajax({
         headers: { "X-CSRFToken": token },
         type:'POST',
-        // url:'{% url comment foodid %}',
         url:'../../../comment/'+ id + '/',
         dataType : "json",
         data : {
@@ -87,7 +84,6 @@ $('.up_comment_hate').click(function(){
             'reaction': 'commenthate'
         },
         success: function(data){
-            console.log(data)
             $('#up_comment_hate_'+commentid).text(data['data'])
         }
     })
