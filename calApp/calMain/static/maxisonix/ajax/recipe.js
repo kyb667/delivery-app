@@ -53,7 +53,9 @@ function selectRecipe(selectList, group){
             if (minPage > 0){ maxPage += 1 }
             maxIndex = maxPage
             if (maxPage > 10){ maxPage = 10 }
-            chage_html += '<li id="backPage"><a>&laquo; Previous</a></li>'
+            if (data['data'].length > 0){
+                chage_html += '<li id="backPage"><a>&laquo; Previous</a></li>'
+            }
             for ( var i = 1; i <= maxPage; i ++){
                 var css = ''
                 if (i == 1){ css = 'current' }
@@ -61,7 +63,11 @@ function selectRecipe(selectList, group){
                                 ' <a>' + i +'</a>' +
                                 '</li>'
             }
-            chage_html += '<li id="nextPage"><a>Next &raquo;</a></li>'
+            if (data['data'].length > 0){
+                chage_html += '<li id="nextPage"><a>Next &raquo;</a></li>'
+            }else{
+                chage_html += '<li><div> 해당하는 상품이 없습니다 </div></li>'
+            }
             chage_ul.innerHTML = chage_html;
         }
     })

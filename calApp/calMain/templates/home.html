@@ -31,6 +31,7 @@
           <li><a href="#">cart</a><span> 1 </span></li>
           {% else %}
           <li><a href="{% url 'login' %}">Login</a></li>
+          <li><a href="{% url 'account' %}">signin</a></li>
           {% endif %}
         </ul>
       </div>
@@ -52,7 +53,6 @@
           <li><a class="drop" href="#">Pages</a>
             <ul>
               <li><a href="{% url 'recipe' %}">recipe</a></li>
-              <li><a href="{% url 'food' %}">food</a></li>
               <li><a href="{% static 'maxisonix/pages/sidebar-left.html' %}">Sidebar Left</a></li>
               <li><a href="{% static 'maxisonix/pages/sidebar-right.html' %}">Sidebar Right</a></li>
               <li><a href="{% static 'maxisonix/pages/basic-grid.html' %}">Basic Grid</a></li>

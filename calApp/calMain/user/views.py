@@ -23,12 +23,12 @@ def signup(request):
             pw.encode('utf-8'), bcrypt.gensalt()).decode()
         body['name'] = request.POST['name']
         body['email'] = request.POST['email']
-        # TODO postcode phone address
-        body['postcode'] = int(request.POST['height'])
-        body['phone'] = int(request.POST['weidth'])
-        body['address'] = request.POST['address']
+        body['postcode'] = int(request.POST['postcode'])
+        body['roadAddress'] = request.POST['roadAddress']
+        body['jibunAddress'] = request.POST['jibunAddress']
+        body['detailAddress'] = request.POST['detailAddress']
         member.objects.create(**body)
-        return render(request, 'index.html')
+        return redirect('index')
 
 
 def signin(request):
@@ -37,8 +37,8 @@ def signin(request):
         login_pw = request.POST['login_password']
         user = member.objects.filter(id=login_id).values()
         user = [dict(i) for i in user][0]
-        if user and bcrypt.checkpw(login_pw.encode(), user['memberpw'].encode()):
-            request.session['name'] = user['memberid']
+        if user and bcrypt.checkpw(login_pw.encode(), user['pw'].encode()):
+            request.session['name'] = user['id']
             return redirect('index')
     return render(request, 'account/account_login.html')
 

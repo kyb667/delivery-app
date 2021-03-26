@@ -16,9 +16,8 @@ def index(request):
 
 
 def detailRecipe(request, name):
-    print(name)
     if name:
-        recipeInfo = recipe.objects.filter(recipename=name).values()
+        recipeInfo = recipe.objects.filter(food_name=name).values()
         if recipeInfo:
             recipeInfo = [dict(i) for i in recipeInfo]
             return JsonResponse({'recipeInfo': recipeInfo})
@@ -29,7 +28,6 @@ def getRecipeNames(reqeust, name):
     recipenames = recipe.objects.filter(
         recipename__istartswith=name).values('recipename').annotate(count=Count('recipeid'))
     recipenames = [dict(i) for i in recipenames]
-    print(recipenames)
     return JsonResponse({'recipenames': recipenames})
 
 
@@ -57,6 +55,10 @@ def select(reqeust):
 def showRecipeDetail(request, recipename, id):
     info = recipe.objects.filter(recipeid=id).values()
     info = [dict(i) for i in info]
-    fooddetail = food.objects.filter(
-        foodname=recipename).values('fooddetail').first()
-    return render(request, 'recipe/detail.html', {'recipeinfo': info[0], 'fooddetail': fooddetail})
+    if info:
+        fooddetail = food.objects.filter(
+            foodname=info[0]['food_name_id']).values('fooddetail').first()
+        recipeDetailInfo = recipedetail.objects.filter(
+            recipe_id=id).values().order_by('recipedetailnum')
+        recipeDetailInfo = [dict(i) for i in recipeDetailInfo]
+        return render(request, 'recipe/detail.html', {'recipeinfo': info[0], 'fooddetail': fooddetail, 'recipeDetailInfo': recipeDetailInfo})

@@ -15,7 +15,7 @@ $("#id").change(function(){
       }
     })
   });
-// email check
+// password check
 $("#password").change(function(){
   var password = $('#password').val();
   var passwordRegExp = /^[a-zA-z0-9]{4,12}$/;
@@ -33,21 +33,4 @@ $("#email").change(function(){
       alert("email 형식이 올바르지 않습니다")
     }
   });
-// weidth check
-$("#weidth").change(function(){
-  var weidth = $('#weidth').val();
-  var weidthRegExp = /^[0-9_]{1,3}$/;
-  if (!weidthRegExp.test(weidth)){
-    $("input[type=text][name=weidth]").val('');
-    alert("weidth 형식이 올바르지 않습니다")
-  }
-});
-// height check
-$("#height").change(function(){
-  var height = $('#height').val();
-  var heightRegExp = /^[0-9_]{1,3}$/;
-  if (!heightRegExp.test(height)){
-    $("input[type=text][name=height]").val('');
-    alert("height 형식이 올바르지 않습니다")
-  }
-});
+
