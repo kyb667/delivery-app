@@ -3,16 +3,24 @@ $(document).ready(function(){
     if (localStorage.getItem("cart") == null){
         existingEntries = []
         localStorage.setItem("cart", JSON.stringify(existingEntries))
+        $('#cart_all_cnt').text(0)
     }else{
         $('#cart_body').empty()
         html = ''
         var cart_body = document.querySelector('#cart_body')
-        var cartList = JSON.parse(localStorage.getItem("cart"))[0]
-        for (var recipeid in cartList){
-            val = cartList[recipeid]
+        var cartList = JSON.parse(localStorage.getItem("cart"))
+        cntAll = 0
+        for (var recipeid in cartList[0]){
+            val = cartList[0][recipeid]
+            cntAll += val['cnt']
             html = addTable(html, recipeid, val['fooddetail'], val['recipename'], val['price'],val['cnt'])
         }
         cart_body.innerHTML += html;
+        if (cartList.length > 0){
+            $('#cart_all_cnt').text(cntAll)
+        }else{
+            $('#cart_all_cnt').text(0)
+        }
     }
 })
 
@@ -83,9 +91,11 @@ function add_product(recipeid,fooddetail,recipename, price){
         cart[recipeid]['cnt'] = val
         cart[recipeid]['money'] = money +' ' + won
         localStorage.setItem("cart", JSON.stringify([cart]))
+        $('#cart_all_cnt').text(parseInt($('#cart_all_cnt').text()) + 1 )
     }else{
         var cart_body = document.querySelector('#cart_body')
         html = addTable('',recipeid,fooddetail,recipename, price)
+        $('#cart_all_cnt').text(1)
         cart_body.innerHTML += html;
     }
     
@@ -111,6 +121,7 @@ $(document).on("click", ".fa-cart-arrow-down", function(){
             $('.cnt_'+recipeid).text(val)
             $('.money_' + recipeid).text(money +' ' + won)
             localStorage.setItem("cart", JSON.stringify([cart]))
+            $('#cart_all_cnt').text(parseInt($('#cart_all_cnt').text()) - 1 )
         }
     }
 });
@@ -133,6 +144,9 @@ $(document).on("click", ".fa-trash", function(){
                         "cnt": val['cnt'],
                         "money": val['price']
                     }
+                }else{
+                    val = cartList[id]
+                    $('#cart_all_cnt').text(parseInt($('#cart_all_cnt').text()) - val['cnt'] )
                 }
             }
             localStorage.setItem("cart", JSON.stringify([cart]))

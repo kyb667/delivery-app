@@ -3,7 +3,7 @@ from django.http import HttpResponse, JsonResponse
 import bcrypt
 import json
 from django.views.decorators.csrf import csrf_exempt
-from ..models import member
+from ...models import member
 
 
 def checkid(request):
@@ -47,3 +47,11 @@ def signout(request):
     if request.session.get('name'):
         del request.session['name']
     return redirect('index')
+
+
+def account(request):
+    return render(request, 'account/account_signup.html')
+
+
+def login(request):
+    return render(request, 'account/account_login.html')

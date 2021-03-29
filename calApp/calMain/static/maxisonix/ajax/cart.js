@@ -39,6 +39,7 @@ function insert_cart(recipeid,fooddetail,recipename, price){
             cart.push(obj)
             localStorage.setItem("cart", JSON.stringify(cart))
         }
+        $('#cart_all_cnt').text(parseInt($('#cart_all_cnt').text()) + 1 )
         alert('장바구니에 상품을 담았습니다')
     }
     

@@ -14,17 +14,18 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from . import views
-from .user import views as user
+from .groupByView.user import views as user
 from .board import views as board
-from .recipe import views as recipe
+from .groupByView.recipe import views as recipe
+from .groupByView.order import views as order
 from django.urls import path
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('account/', views.account, name='account'),
-    path('login/', views.login, name='login'),
 
     # user
+    path('account/', user.account, name='account'),
+    path('login/', user.login, name='login'),
     path('ajax/checkid/', user.checkid, name='checkid'),
     path('signup/', user.signup, name='signup'),
     path('signin/', user.signin, name='signin'),
@@ -32,9 +33,11 @@ urlpatterns = [
 
     # board
     path('comment/<int:foodid>/', board.create_comment, name='comment'),
-    # 댓글 좋아요 싫어요
+
+    # comment
     path('comment/reaction/', board.comment_up, name='comment_up'),
 
+    # recipe
     path('recipe/', recipe.index, name='recipe'),
     path('recipe/getRecipeNames/<str:name>/',
          recipe.getRecipeNames, name='getRecipeNames'),
@@ -43,4 +46,7 @@ urlpatterns = [
     path('recipe/<str:name>/', recipe.detailRecipe, name='detailRecipe'),
     path('showrecipe/<str:recipename>_<str:id>/',
          recipe.showRecipeDetail, name='showRecipeDetail'),
+
+    # order
+    path('order/', order.home, name='order_home'),
 ]

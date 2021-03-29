@@ -28,10 +28,11 @@
           <li><a href="{% url 'index' %}"><i class="fa fa-lg fa-home"></i></a></li>
           {% if request.session.name %}
           <li><a href="{% url 'signout' %}">Logout</a></li>
-          <li><a id="show_cart">cart</a><span id="cart_all_cnt"> 1 </span></li>
+          <li><a id="show_cart">cart</a>&nbsp;<span id="cart_all_cnt"></span></li>
           {% else %}
           <li><a href="{% url 'login' %}">Login</a></li>
           <li><a href="{% url 'account' %}">signin</a></li>
+          <li><a id="show_cart">cart</a>&nbsp;<span id="cart_all_cnt"></span></li>
           {% endif %}
         </ul>
       </div>
@@ -98,8 +99,8 @@
             <tbody id="cart_body">
             </tbody>
           </table>
-          <p style="text-align: right;" class="pop_bt">
-            구매하러가기
+          <p style="text-align: right;">
+            <a href="{% url 'order_home' %}" style="color: black;">구매하러가기</a>
         </p>
           <p style="text-align: right;" class="pop_bt">
             닫기

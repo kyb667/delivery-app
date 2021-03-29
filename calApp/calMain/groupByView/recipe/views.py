@@ -3,7 +3,7 @@ from django.http import HttpResponse, JsonResponse
 import bcrypt
 import json
 from django.views.decorators.csrf import csrf_exempt
-from ..models import recipe, member, recipedetail, food
+from ...models import recipe, member, recipedetail, food
 from django.db.models import F, Count
 from datetime import datetime
 from django.core.serializers.json import DjangoJSONEncoder
@@ -20,6 +20,7 @@ def detailRecipe(request, name):
         recipeInfo = recipe.objects.filter(food_name=name).values()
         if recipeInfo:
             recipeInfo = [dict(i) for i in recipeInfo]
+            print(recipeInfo)
             return JsonResponse({'recipeInfo': recipeInfo})
         return JsonResponse({'recipeInfo': None})
 
