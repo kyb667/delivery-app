@@ -164,7 +164,7 @@ $(document).on("click", "#direct_search_btn", function(){
     showHtml = document.querySelector('#direct_search')
     if (direct_search_check % 2 == 1){
         html = '<header> <address> By <a id="direct_search_btn"> 직접검색 <i id="direct_search_btn_css" class="fa fa-chevron-up"></i> </a> </address> </header>'
-        html += '<form method="post" action="#"> <fieldset>  <input type="text" placeholder="음식 이름을 입력해주세요" onkeyup="select_search_word(this)"><ul id="search_word_list"></ul></fieldset></form>'
+        html += '<form> <fieldset>  <input type="text" placeholder="음식 이름을 입력해주세요" onkeyup="select_search_word(this)"><ul id="search_word_list"></ul></fieldset></form>'
     }
     else{
         html = '<header> <address> By <a id="direct_search_btn"> 직접검색 <i id="direct_search_btn_css" class="fa fa-chevron-down"></i> </a> </address> </header>'
@@ -221,7 +221,8 @@ function select_search_word(target){
                 html = ''
                 for (var i = 0; i < data.length; i++){
                     info = data[i]
-                    html += '<li style="background-color:#F7F7F7" class="show_recipedetail" name="'+ info.recipename +'"><a>'+ info.recipename +'</a></li>'
+                    console.log(info)
+                    html += '<li style="background-color:#F7F7F7" class="show_recipedetail" name="'+ info.foodname +'"><a>'+ info.foodname +'</a></li>'
                 }
                 list.innerHTML = html;
             }
@@ -229,8 +230,9 @@ function select_search_word(target){
     }
     
 }
-// 닭갈비 레시피만 나오게 함
+// 레시피만 나오게 함
 $(document).on('click', '.show_recipedetail', function(){
+    $('#search_word_list').empty()
     var name = encodeURI($(this).attr('name'))
     $.ajax({
         type:'GET',

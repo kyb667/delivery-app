@@ -14,28 +14,32 @@
   <nav class="sdb_holder">
     <ul>
       <li><a href="#">Navigation - Level 1</a></li>
-      <li><a href="#">Navigation - Level 1</a>
+      <li><a href="#">notice</a>
         <ul>
-          <li><a href="#">Navigation - Level 2</a></li>
-          <li><a href="#">Navigation - Level 2</a></li>
+          <li><a href="#">Q&A</a></li>
+          <li><a href="#">1:1 board</a></li>
         </ul>
       </li>
-      <li><a href="#">Navigation - Level 1</a>
+      <li><a href="#">my page</a>
         <ul>
-          <li><a href="#">Navigation - Level 2</a></li>
-          <li><a href="#">Navigation - Level 2</a>
+          <li><a href="#">my order</a>
             <ul>
-              <li><a href="#">Navigation - Level 3</a></li>
-              <li><a href="#">Navigation - Level 3</a></li>
+              <li><a href="#">결제이력</a></li>
+            </ul>
+          </li>
+          <li><a href="#">my infomation</a>
+            <ul>
+              <li><a href="#">card</a></li>
+              <li><a href="#">infomation</a></li>
             </ul>
           </li>
         </ul>
       </li>
-      <li><a href="#">Navigation - Level 1</a></li>
+      <li><a href="#">comment</a></li>
     </ul>
   </nav>
   <div class="sdb_holder">
-    <h6>Lorem ipsum dolor</h6>
+    <h6>반찬배달업체</h6>
     <address>
     Full Name<br>
     Address Line 1<br>
@@ -66,15 +70,10 @@
 <!-- ################################################################################################ -->
 <div class="content three_quarter"> 
   <!-- ################################################################################################ -->
-  <h1>&lt;h1&gt; to &lt;h6&gt; - Headline Colour and Size Are All The Same</h1>
-  <img class="imgr borderedbox inspace-5" src="../images/demo/imgr.gif" alt="">
-  <p>Aliquatjusto quisque nam consequat doloreet vest orna partur scetur portortis nam. Metadipiscing eget facilis elit sagittis felisi eger id justo maurisus convallicitur.</p>
-  <p>Dapiensociis <a href="#">temper donec auctortortis cumsan</a> et curabitur condis lorem loborttis leo. Ipsumcommodo libero nunc at in velis tincidunt pellentum tincidunt vel lorem.</p>
-  <img class="imgl borderedbox inspace-5" src="../images/demo/imgl.gif" alt="">
-  <p>This is a W3C compliant free website template from <a href="https://www.os-templates.com/" title="Free Website Templates">OS Templates</a>. For full terms of use of this template please read our <a href="https://www.os-templates.com/template-terms">website template licence</a>.</p>
-  <p>You can use and modify the template for both personal and commercial use. You must keep all copyright information and credit links in the template and associated files. For more website templates visit our <a href="https://www.os-templates.com/">free website templates</a> section.</p>
-  <p>Portortornec condimenterdum eget consectetuer condis consequam pretium pellus sed mauris enim. Puruselit mauris nulla hendimentesque elit semper nam a sapien urna sempus.</p>
   <h1>카트 목록</h1>
+  <p><a href="#">송장번호</a> 는 주문하시고 난 뒤 등록된 메일 또는 핸드폰으로 전송됩니다</p>
+  <p>저희 웹사이트는 주문대행업체이기때문에 <a href="#">배달관련사항</a> 은 판매자에게 문의해주세요</p>
+  <p>기타 문의사항은 <a href="#">Q&A</a> 창을 이용해주시기 바랍니다</p>
       <div class="scrollable">
         <table>
           <thead>
@@ -93,16 +92,50 @@
         </table>
       </div>
       <br/>
-  <div id="comments">
-    <input type="submit" name="submit" value="비회원 주문">
-    &nbsp;
-    <input type="submit" onclick="window.location.href='../login'" value="로그인">
+  <div id="comments" class="order_btn_form">
   </div>
   <!-- ################################################################################################ -->
 </div>
+<div id="order_modal" class="order_modal">
+  <div class="order-modal-content">
+    <p><a>주문확인창</a></p>
+    <p>총 <a href="#">1</a> 개의 상품을 주문하시겠습니까?</p>
+    <div id="comments">
+      <input type='submit' id="order_product"  value='주문하기'> &nbsp; <input type='submit' id="close_order_modal" value='닫기'>
+    </div>
+  </div>
+</div>
+
 <!-- ################################################################################################ -->
 <!-- / main body -->
 <div class="clear"></div>
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
       <script src="{% static 'maxisonix/ajax/order.js' %}"></script>
-{% endblock %}
+      <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
+      <script type="text/javascript" src="https://service.iamport.kr/js/iamport.payment-1.1.2.js"></script>
+      <style>
+        .order_modal {
+          color: black;
+             display: none; /* Hidden by default */
+             position: fixed; /* Stay in place */
+             z-index: 1; /* Sit on top */
+             left: 0;
+             top: 0;
+             width: 100%; /* Full width */
+             height: 100%; /* Full height */
+             background-color: rgb(0,0,0); /* Fallback color */
+             background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+         }
+      
+         /* Modal Content/Box */
+         .order-modal-content {
+            overflow: auto;/* Enable scroll if needed */
+             background-color: #fefefe;
+             margin: 15% auto; /* 15% from the top and centered */
+             padding: 1%;
+             border: 1px solid #888;
+             width: 25%; /* Could be more or less, depending on screen size */   
+             height: 20%;              
+         }
+       </style>
+      {% endblock %}

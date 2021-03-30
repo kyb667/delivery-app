@@ -26,10 +26,9 @@ def detailRecipe(request, name):
 
 
 def getRecipeNames(reqeust, name):
-    recipenames = recipe.objects.filter(
-        recipename__istartswith=name).values('recipename').annotate(count=Count('recipeid'))
-    recipenames = [dict(i) for i in recipenames]
-    return JsonResponse({'recipenames': recipenames})
+    foodNameList = food.objects.filter(
+        foodname__icontains=name).values('foodname')[:10]
+    return JsonResponse({'recipenames': list(foodNameList)})
 
 
 def getRecipeTypes(reqeust):

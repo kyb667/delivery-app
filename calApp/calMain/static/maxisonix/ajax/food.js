@@ -65,7 +65,6 @@ $('.up_comment_love').click(function(){
             'reaction': 'commentlove'
         },
         success: function(data){
-            console.log(data)
             $('#up_comment_love_'+commentid).text(data['data'])
         }
     })

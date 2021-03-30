@@ -49,4 +49,5 @@ urlpatterns = [
 
     # order
     path('order/', order.home, name='order_home'),
+    path('order/requestCode', order.requestCode, name='requestCode'),
 ]
