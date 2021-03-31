@@ -65,13 +65,28 @@ class recipedetail(models.Model):
         db_table = 'recipedetail'
 
 
-class orderhistory(models.Model):
-    member_id = models.ForeignKey(member, on_delete=models.CASCADE)
-    recipe_id = models.ForeignKey(recipe, on_delete=models.CASCADE)
-    ordertime = models.DateField(auto_now_add=datetime.now())
-    count = models.BigIntegerField()
-    updatetime = models.DateField(auto_now=datetime.now())
+class order(models.Model):
+    id_uid = models.CharField(primary_key=True, max_length=200)
+    product_uid = models.CharField(max_length=200)
+    member_id = models.CharField(max_length=200)
+    pay = models.CharField(max_length=20)
+    requestid = models.CharField(max_length=200)
     available_flag = models.BooleanField(default=True)
 
     class Meta:
-        db_table = 'orderhistory'
+        db_table = 'order'
+
+
+class order_info(models.Model):
+    num = models.BigAutoField(primary_key=True)
+    id_uid = models.CharField(max_length=200)
+    product_uid = models.CharField(max_length=200)
+    member_id = models.CharField(max_length=200)
+    recipe_id = models.BigIntegerField()
+    count = models.BigIntegerField()
+    price = models.CharField(max_length=20)
+    ordertime = models.DateField(auto_now_add=datetime.now())
+    updatetime = models.DateField(auto_now=datetime.now())
+
+    class Meta:
+        db_table = 'order_info'

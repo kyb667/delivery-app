@@ -29,6 +29,7 @@
           {% if request.session.name %}
           <li><a href="{% url 'signout' %}">Logout</a></li>
           <li><a id="show_cart">cart</a>&nbsp;<span id="cart_all_cnt"></span></li>
+          <li><a href="">point</a>&nbsp;<span id="point">0</span></li>
           {% else %}
           <li><a href="{% url 'login' %}">Login</a></li>
           <li><a href="{% url 'account' %}">signin</a></li>
@@ -51,29 +52,24 @@
       <nav id="mainav" class="fl_right">
         <ul class="clear">
           <li class="active"><a href="{% url 'index' %}">Home</a></li>
-          <li><a class="drop" href="#">Pages</a>
+          <li><a class="drop" href="{% url 'recipe' %}">recipe</a></li>
+          {% if request.session.name %}
+          <li><a class="drop" href="#">mypage</a>
             <ul>
-              <li><a href="{% url 'recipe' %}">recipe</a></li>
-              <li><a href="{% static 'maxisonix/pages/sidebar-left.html' %}">Sidebar Left</a></li>
-              <li><a href="{% static 'maxisonix/pages/sidebar-right.html' %}">Sidebar Right</a></li>
-              <li><a href="{% static 'maxisonix/pages/basic-grid.html' %}">Basic Grid</a></li>
+              <li><a href="#">내 정보</a></li>
+              <li><a href="#">결제관리</a></li>
+              <li><a href="#">구매내역</a></li>
             </ul>
           </li>
-          <li><a class="drop" href="#">Dropdown</a>
-            <ul>
-              <li><a href="#">Level 2</a></li>
-              <li><a class="drop" href="#">Level 2 + Drop</a>
-                <ul>
-                  <li><a href="#">Level 3</a></li>
-                  <li><a href="#">Level 3</a></li>
-                  <li><a href="#">Level 3</a></li>
-                </ul>
-              </li>
-              <li><a href="#">Level 2</a></li>
-            </ul>
-          </li>
-          <li><a href="#">Link Text</a></li>
-          <li><a href="#">Link Text</a></li>
+          {% endif %}
+            <li><a href="#">notice</a>
+              <ul>
+                <li><a href="#">공지사항</a></li>
+                <li><a href="#">Q&A</a></li>
+                <li><a href="#">1:1 질문</a></li>
+              </ul>
+            </li>
+          <li><a href="#">주문내역 확인</a></li>
         </ul>
       </nav>
       <!-- ################################################################################################ -->
@@ -82,6 +78,7 @@
   <div id="myModal" class="modal">
     <div class="modal-content">
       <div class="scrollable">
+        <p style="text-align: right;"><span style="font-size: 14pt;" class="pop_bt"><i class="fa fa-times-circle"></i></span></p>
         <p style="text-align: center;"><span style="font-size: 14pt;"><b><i class="fa fa-shopping-basket"></i>
           <span style="font-size: 24pt;">cart</span></b></span></p>
           <table>
@@ -99,11 +96,10 @@
             <tbody id="cart_body">
             </tbody>
           </table>
-          <p style="text-align: right;">
-            <a href="{% url 'order_home' %}" style="color: black;">구매하러가기</a>
-        </p>
-          <p style="text-align: right;" class="pop_bt">
-            닫기
+          <br/>
+          <p class="more"><a href="{% url 'order_home' %}">&raquo; 구매하러가기 </a></p>
+          <p >
+            <a href="" style="color: black;"></a>
         </p>
       </div>
     </div>

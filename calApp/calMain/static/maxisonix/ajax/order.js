@@ -37,17 +37,20 @@ function show_order_modal(){
 function hide_order_modal(){
     $('#order_modal').hide()
 }
-function paymentFunc(impCode){
+function paymentFunc(impCode, cart){
     var IMP = window.IMP;
+    var token = getCookie('csrftoken');
     IMP.init(impCode);
+    hide_order_modal()
     IMP.request_pay({
         pg : 'html5_inicis',
         pay_method : 'card',
         merchant_uid : 'merchant_' + new Date().getTime(),
         name : 'testuser1',
-        amount : 1,
+        amount : 100,
         buyer_tel : 010-1234-5678,
     }, function(rsp) {
+        console.log(rsp)
         if ( rsp.success ) {
             var msg = '결제가 완료되었습니다.';
             msg += '고유ID : ' + rsp.imp_uid;
@@ -57,10 +60,21 @@ function paymentFunc(impCode){
         } else {
             var msg = '결제에 실패하였습니다.';
             msg += '에러내용 : ' + rsp.error_msg;
-        }
+            $.ajax({
+                headers: { "X-CSRFToken": token },
+                type:'POST',
+                url : '../order-success',
+                data: {'returnVal' : JSON.stringify(rsp), 'cart':JSON.stringify(cart)},
+                dataType : 'json',
+                success : function(data){
+                    alert(data['ordernum'])
+                }
+            })
+        }    
         alert(msg)
-});
+    });
 }
+
 $(document).on('click', '#order_product', function(){
     var cart = JSON.parse(localStorage.getItem("cart"))
     console.log(cart)
@@ -71,7 +85,7 @@ $(document).on('click', '#order_product', function(){
             if('code' in data){
                 var impCode = data['code']
                 if (impCode){
-                    paymentFunc(impCode)
+                    paymentFunc(impCode, cart)
                 }
             }
         },
@@ -80,3 +94,19 @@ $(document).on('click', '#order_product', function(){
         }
     })
 })
+
+//##################request post set cookie##########################
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}

@@ -50,4 +50,5 @@ urlpatterns = [
     # order
     path('order/', order.home, name='order_home'),
     path('order/requestCode', order.requestCode, name='requestCode'),
+    path('order-success', order.order_success, name='order_success'),
 ]
