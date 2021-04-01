@@ -14,7 +14,7 @@ checkCode = common.IDENTIFICATION_CODE
 
 
 def home(request):
-    return render(request, 'order/order_home.html')
+    return render(request, 'order/order_request.html')
 
 
 def requestCode(request):
@@ -48,4 +48,4 @@ def order_success(request):
                                     'updatetime': datetime.now()}
             insertList.append(order_info(**insert_order_product))
         order_info.objects.bulk_create(insertList)
-    return JsonResponse({'ordernum': now})
+    return render(request, 'order/order_finish.html')

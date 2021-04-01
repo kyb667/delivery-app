@@ -1,0 +1,35 @@
+{% extends "./order_mainpage.html" %}
+{% load static %}
+
+{% block orderdetail %}
+<div class="content three_quarter"> 
+  <!-- ################################################################################################ -->
+  <h1>카트 목록</h1>
+  <p><a href="#">송장번호</a> 는 주문하시고 난 뒤 등록된 메일 또는 핸드폰으로 전송됩니다</p>
+  <p>저희 웹사이트는 주문대행업체이기때문에 <a href="#">배달관련사항</a> 은 판매자에게 문의해주세요</p>
+  <p>기타 문의사항은 <a href="#">Q&A</a> 창을 이용해주시기 바랍니다</p>
+  <br/>
+      <div class="scrollable">
+        <table>
+          <thead>
+            <tr>
+              <th>상품명</th>
+              <th>품목</th>
+              <th>금액</th>
+              <th>개수</th>
+              <th>총액</th>
+              <th>상품수량변경</th>
+              <th>상품 제거</th>
+            </tr>
+          </thead>
+          <tbody id="order_cart_body">
+          </tbody>
+        </table>
+      </div>
+      <br/>
+  <div id="comments" class="order_btn_form">
+  </div>
+  <!-- ################################################################################################ -->
+</div>
+
+{% endblock %}

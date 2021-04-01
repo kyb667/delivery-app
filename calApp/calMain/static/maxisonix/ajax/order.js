@@ -10,7 +10,7 @@ $(document).ready(function(){
         order_cart_body.innerHTML += html;
     } else{
         html = ''
-        form_html = "<input type='submit' id='orderbtn' value='비회원 주문'> &nbsp; <input type='submit' onclick='window.location.href=\"../login\"' value='로그인'>"
+        form_html = "<input type='submit' id='orderbtn' value='주문하기'>"
         var order_cart_body = document.querySelector('#order_cart_body')
         var order_btn_form = document.querySelector('.order_btn_form')
         var cartList = JSON.parse(localStorage.getItem("cart"))
@@ -64,11 +64,9 @@ function paymentFunc(impCode, cart){
                 headers: { "X-CSRFToken": token },
                 type:'POST',
                 url : '../order-success',
+                credentials: 'include',
                 data: {'returnVal' : JSON.stringify(rsp), 'cart':JSON.stringify(cart)},
-                dataType : 'json',
-                success : function(data){
-                    alert(data['ordernum'])
-                }
+                dataType : 'json'
             })
         }    
         alert(msg)

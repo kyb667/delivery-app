@@ -1,0 +1,93 @@
+{% extends "../base.html" %}
+{% load static %}
+{% block index %}
+    <ul>
+      <li><a href="{% url 'index' %}">Home</a></li>
+      <li><a href="{% url 'order_home' %}">cart</a></li>
+    </ul>
+{% endblock %}
+
+{% block orderpage %}
+<div class="sidebar one_quarter first"> 
+  <!-- ################################################################################################ -->
+  <div class="sdb_holder">
+    <article>
+      <h6>Lorem ipsum dolor</h6>
+      <p>Nuncsed sed conseque a at quismodo tris mauristibus sed habiturpiscinia sed.</p>
+      <ul>
+        <li><a href="#">Lorem ipsum dolor sit</a></li>
+        <li>Etiam vel sapien et</li>
+        <li><a href="#">Etiam vel sapien et</a></li>
+      </ul>
+      <p>Nuncsed sed conseque a at quismodo tris mauristibus sed habiturpiscinia sed. Condimentumsantincidunt dui mattis magna intesque purus orci augue lor nibh.</p>
+      <p class="more"><a href="#">Continue Reading &raquo;</a></p>
+    </article>
+  </div>
+  <div class="sdb_holder">
+    <h6>반찬배달업체</h6>
+    <address>
+    Full Name<br>
+    Address Line 1<br>
+    Address Line 2<br>
+    Town/City<br>
+    Postcode/Zip<br>
+    <br>
+    Tel: xxxx xxxx xxxxxx<br>
+    Email: <a href="#">contact@domain.com</a>
+    </address>
+  </div>
+  
+  <!-- ################################################################################################ -->
+</div>
+<!-- ################################################################################################ -->
+<!-- ################################################################################################ -->
+{% block orderdetail %}
+{% endblock %}
+<div id="order_modal" class="order_modal">
+  <div class="order-modal-content">
+    <p><a>주문확인창</a></p>
+    <p>총 <a href="#">1</a> 개의 상품을 주문하시겠습니까?</p>
+    {% if not request.session.name %}
+    <p><a>비회원으로 주문하시면 포인트 적립을 받지 못합니다</a></p>
+    <p> &nbsp; <a href="{% url 'account' %}"> » 회원가입 하러가기</a></p>
+    {% endif %}
+    <div id="comments">
+      <input type='submit' id="order_product"  value='주문하기'> &nbsp; <input type='submit' id="close_order_modal" value='닫기'>
+    </div>
+  </div>
+</div>
+
+
+<!-- ################################################################################################ -->
+<!-- / main body -->
+<div class="clear"></div>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+      <script src="{% static 'maxisonix/ajax/order.js' %}"></script>
+      <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
+      <script type="text/javascript" src="https://service.iamport.kr/js/iamport.payment-1.1.2.js"></script>
+      <style>
+        .order_modal {
+          color: black;
+             display: none; /* Hidden by default */
+             position: fixed; /* Stay in place */
+             z-index: 1; /* Sit on top */
+             left: 0;
+             top: 0;
+             width: 100%; /* Full width */
+             height: 100%; /* Full height */
+             background-color: rgb(0,0,0); /* Fallback color */
+             background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+         }
+      
+         /* Modal Content/Box */
+         .order-modal-content {
+            overflow: auto;/* Enable scroll if needed */
+             background-color: #fefefe;
+             margin: 15% auto; /* 15% from the top and centered */
+             padding: 1%;
+             border: 1px solid #888;
+             width: 50%; /* Could be more or less, depending on screen size */   
+             height: 50%;              
+         }
+       </style>
+      {% endblock %}
