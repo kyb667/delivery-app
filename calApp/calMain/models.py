@@ -29,7 +29,7 @@ class food(models.Model):
 class recipe(models.Model):
     member_id = models.ForeignKey(member, on_delete=models.CASCADE)
     food_name = models.ForeignKey(food, on_delete=models.CASCADE)
-    recipeid = models.AutoField(primary_key=True)
+    recipe_id = models.AutoField(primary_key=True)
     recipename = models.CharField(max_length=1000)
     recipesummary = models.CharField(max_length=1000)
     price = models.CharField(max_length=20)

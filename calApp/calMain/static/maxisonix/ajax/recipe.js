@@ -19,14 +19,10 @@ function getCookie(name) {
     return cookieValue;
 }
 function selectRecipe(selectList, group){
-    var token = getCookie('csrftoken');
     $.ajax({
-        headers: { "X-CSRFToken": token },
-        type:'POST',
-        url:'./select/',
+        url:"./select",
         data: {'selectList' : selectList , 'group' :group},
         dataType: 'json',
-        async:false,
         success : function(data){
             recipeList = data['data']
             allRecipeList = data['data']
@@ -69,6 +65,9 @@ function selectRecipe(selectList, group){
                 chage_html += '<li><div> 해당하는 상품이 없습니다 </div></li>'
             }
             chage_ul.innerHTML = chage_html;
+        },
+        error: function(data){
+            alert('selectRecipe error')
         }
     })
 }
@@ -164,7 +163,7 @@ $(document).on("click", "#direct_search_btn", function(){
     showHtml = document.querySelector('#direct_search')
     if (direct_search_check % 2 == 1){
         html = '<header> <address> By <a id="direct_search_btn"> 직접검색 <i id="direct_search_btn_css" class="fa fa-chevron-up"></i> </a> </address> </header>'
-        html += '<form> <fieldset>  <input type="text" placeholder="음식 이름을 입력해주세요" onkeyup="select_search_word(this)"><ul id="search_word_list"></ul></fieldset></form>'
+        html += '<div> <fieldset><input type="text" id="direct_search_input" placeholder="음식 이름을 입력해주세요" onkeyup="select_search_word(this)"><ul id="search_word_list"></ul></fieldset></div>'
     }
     else{
         html = '<header> <address> By <a id="direct_search_btn"> 직접검색 <i id="direct_search_btn_css" class="fa fa-chevron-down"></i> </a> </address> </header>'
@@ -204,6 +203,7 @@ $(document).on("click",".select_recipe_group", function(){
 })
 //처음 로드
 $(function(){
+    console.log(1)
     selectRecipe('', 'all')
 })
 //직접검색 표시
@@ -228,7 +228,6 @@ function select_search_word(target){
             }
         })
     }
-    
 }
 // 레시피만 나오게 함
 $(document).on('click', '.show_recipedetail', function(){

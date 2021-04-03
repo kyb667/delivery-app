@@ -35,7 +35,6 @@ function show_modal(){
     html = ''
     var cart_body = document.querySelector('#cart_body')
     var cartList = JSON.parse(localStorage.getItem("cart"))
-    console.log(cartList)
     if (cartList){
         for (var recipeid in cartList[0]){
             val = cartList[0][recipeid]

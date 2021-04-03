@@ -39,17 +39,16 @@ def getRecipeTypes(reqeust):
 
 
 def select(reqeust):
-    if reqeust.method == 'POST':
-        selectList = reqeust.POST['selectList']
-        group = reqeust.POST['group']
-        if selectList:
-            if group == 'recipetype':
-                recipeList = food.objects.filter(
-                    fooddetail=selectList).values()
-        else:
-            recipeList = food.objects.all().values()
-        recipeList = [dict(i) for i in recipeList]
-        return JsonResponse({'data': recipeList})
+    selectList = reqeust.GET['selectList']
+    group = reqeust.GET['group']
+    if selectList:
+        if group == 'recipetype':
+            recipeList = food.objects.filter(
+                fooddetail=selectList).values()
+    else:
+        recipeList = food.objects.all().values()
+    recipeList = [dict(i) for i in recipeList]
+    return JsonResponse({'data': recipeList})
 
 
 def showRecipeDetail(request, recipename, id):

@@ -17,6 +17,10 @@ def home(request):
     return render(request, 'order/order_request.html')
 
 
+def order_check(request):
+    return render(request, 'order/order_check.html')
+
+
 def requestCode(request):
     return JsonResponse({'code': checkCode})
 
@@ -48,4 +52,17 @@ def order_success(request):
                                     'updatetime': datetime.now()}
             insertList.append(order_info(**insert_order_product))
         order_info.objects.bulk_create(insertList)
-    return render(request, 'order/order_finish.html')
+    return JsonResponse({'member_id': user[:]})
+
+
+def order_history(reqeust):
+    if reqeust.method == 'POST':
+        if 'num' in reqeust.POST:
+            uuid = reqeust.POST['num']
+            orderList = order_info.objects.filter(id_uid=uuid).extra(
+                tables=['recipe'], where=['recipe.recipe_id=order_info.recipe_id'])
+            print(orderList)
+            print(orderList.query)
+        elif ('member_id' in reqeust.POST) and ('pw' in reqeust.POST):
+            print(reqeust.POST)
+    return HttpResponse(orderList)

@@ -42,7 +42,7 @@ urlpatterns = [
     path('recipe/getRecipeNames/<str:name>/',
          recipe.getRecipeNames, name='getRecipeNames'),
     path('recipe/getRecipeTypes/', recipe.getRecipeTypes, name='getRecipeTypes'),
-    path('recipe/select/', recipe.select, name='select'),
+    path('recipe/select', recipe.select, name='select'),
     path('recipe/<str:name>/', recipe.detailRecipe, name='detailRecipe'),
     path('showrecipe/<str:recipename>_<str:id>/',
          recipe.showRecipeDetail, name='showRecipeDetail'),
@@ -51,4 +51,6 @@ urlpatterns = [
     path('order/', order.home, name='order_home'),
     path('order/requestCode', order.requestCode, name='requestCode'),
     path('order-success', order.order_success, name='order_success'),
+    path('order-check', order.order_check, name='order_check'),
+    path('order-history', order.order_history, name='order_history'),
 ]
