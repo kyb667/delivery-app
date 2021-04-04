@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 import bcrypt
 import json
-from ...models import order, order_info
+from ...models import order_info, order_detail, member
 from ... import common
 from datetime import datetime
 import time
@@ -17,8 +17,16 @@ def home(request):
     return render(request, 'order/order_request.html')
 
 
+def cart(request):
+    return render(request, 'order/order_cart.html')
+
+
 def order_check(request):
     return render(request, 'order/order_check.html')
+
+
+def order_finish(request):
+    return render(request, 'order/order_finish.html')
 
 
 def requestCode(request):
@@ -27,42 +35,78 @@ def requestCode(request):
 
 def order_success(request):
     if request.method == 'POST':
-        user = request.session.get('name')
-        randomid = ''.join(map(str, [random.choice(
-            string.ascii_letters) for i in range(5)]))
-        now = str(int(datetime.now().timestamp() * 1000))
-        user = user if user else randomid+'_' + now
         orderInfo = json.loads(request.POST['returnVal'])
         cartList = json.loads(request.POST['cart'])[0]
+        user = json.loads(request.POST['id'])['member_id']
+        order_dict = json.loads(request.POST['order_dict'])
         insertList = []
-        insert_order = {'id_uid': orderInfo["imp_uid"],
-                        'product_uid': orderInfo["merchant_uid"],
-                        'member_id': user,
-                        'pay': orderInfo["pay_method"],
-                        'requestid': orderInfo["request_id"]}
-        order.objects.create(**insert_order)
+        money = 0
         for num, cart in cartList.items():
+            money += int(cart["money"].split(' ')[0])
             insert_order_product = {'id_uid': orderInfo["imp_uid"],
                                     'product_uid': orderInfo["merchant_uid"],
-                                    'member_id': user[:],
+                                    'member_id': user,
                                     'recipe_id': num,
                                     'count': cart["cnt"],
                                     'price': cart['price'],
                                     'ordertime': datetime.now(),
                                     'updatetime': datetime.now()}
-            insertList.append(order_info(**insert_order_product))
-        order_info.objects.bulk_create(insertList)
+            insertList.append(order_detail(**insert_order_product))
+        order_detail.objects.bulk_create(insertList)
+        insert_order = {'id_uid': orderInfo["imp_uid"],
+                        'product_uid': orderInfo["merchant_uid"],
+                        'member_id': user,
+                        'order_password': bcrypt.hashpw(order_dict['order_password'].encode('utf-8'), bcrypt.gensalt()).decode(),
+                        'pay': orderInfo["pay_method"],
+                        'order_money': money,
+                        'order_email': order_dict["order_email"],
+                        'order_phone': order_dict["order_phone"],
+                        'order_postcode': order_dict["order_postcode"],
+                        'order_roadAddress': order_dict["order_roadAddress"],
+                        'order_detailAddress': order_dict["order_detailAddress"]}
+        order_info.objects.create(**insert_order)
     return JsonResponse({'member_id': user[:]})
 
 
-def order_history(reqeust):
-    if reqeust.method == 'POST':
-        if 'num' in reqeust.POST:
-            uuid = reqeust.POST['num']
-            orderList = order_info.objects.filter(id_uid=uuid).extra(
-                tables=['recipe'], where=['recipe.recipe_id=order_info.recipe_id'])
-            print(orderList)
-            print(orderList.query)
-        elif ('member_id' in reqeust.POST) and ('pw' in reqeust.POST):
-            print(reqeust.POST)
-    return HttpResponse(orderList)
+def order_history(request):
+    if request.method == 'POST':
+        if request.session.get('name'):
+            if request.session.get('name') == request.POST['id']:
+                pw = member.objects.filter(
+                    id=request.session.get('name')).values('pw').first()
+                if pw and bcrypt.checkpw(request.POST['pw'].encode(), pw['pw'].encode()):
+                    info = order_info.objects.filter(
+                        member_id=request.session.get('name')).values()
+                    info = [dict(i) for i in info]
+                    return render(request, 'order/order_notice.html', {'orderList': info})
+        else:
+            if 'num' in request.POST:
+                uuid = request.POST['num']
+                info = order_info.objects.filter(id_uid=uuid).values()
+                info = [dict(i) for i in info]
+                return render(request, 'order/order_notice.html', {'orderList': info})
+            elif ('member_id' in request.POST) and ('pw' in request.POST):
+                member_id = request.POST['member_id']
+                pw = member.objects.filter(
+                    id=member_id).values('pw').first()
+                if pw and bcrypt.checkpw(request.POST['pw'].encode(), pw['pw'].encode()):
+                    info = order_info.objects.filter(
+                        member_id=member_id).values()
+                    info = [dict(i) for i in info]
+                    return render(request, 'order/order_notice.html', {'orderList': info})
+                else:
+                    info = order_info.objects.filter(
+                        member_id=member_id).values()
+                    info = [dict(i) for i in info][0]
+                    if info and bcrypt.checkpw(request.POST['pw'].encode(), info['order_password'].encode()):
+                        info.pop('order_password')
+                    return render(request, 'order/order_notice.html', {'orderList': info})
+
+
+def order_login_check(request):
+    user = request.session.get('name')
+    randomid = ''.join(map(str, [random.choice(
+        string.ascii_letters) for i in range(5)]))
+    now = str(int(datetime.now().timestamp() * 1000))
+    user = user if user else randomid+'_' + now
+    return JsonResponse({'name': user})

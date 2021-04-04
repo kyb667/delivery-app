@@ -38,6 +38,7 @@ function hide_order_modal(){
     $('#order_modal').hide()
 }
 function paymentFunc(impCode, cart){
+    console.log(impCode, cart)
     var IMP = window.IMP;
     var token = getCookie('csrftoken');
     IMP.init(impCode);
@@ -66,7 +67,12 @@ function paymentFunc(impCode, cart){
                 url : '../order-success',
                 credentials: 'include',
                 data: {'returnVal' : JSON.stringify(rsp), 'cart':JSON.stringify(cart)},
-                dataType : 'json'
+                dataType : 'json',
+                success:function(data){
+                    console.log(data)
+                    id = data['member_id']
+                    location.href = "order_finish.html?id=" + id;
+                }
             })
         }    
         alert(msg)

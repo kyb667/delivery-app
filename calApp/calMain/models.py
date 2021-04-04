@@ -29,7 +29,7 @@ class food(models.Model):
 class recipe(models.Model):
     member_id = models.ForeignKey(member, on_delete=models.CASCADE)
     food_name = models.ForeignKey(food, on_delete=models.CASCADE)
-    recipe_id = models.AutoField(primary_key=True)
+    recipeid = models.AutoField(primary_key=True)
     recipename = models.CharField(max_length=1000)
     recipesummary = models.CharField(max_length=1000)
     price = models.CharField(max_length=20)
@@ -65,19 +65,25 @@ class recipedetail(models.Model):
         db_table = 'recipedetail'
 
 
-class order(models.Model):
+class order_info(models.Model):
     id_uid = models.CharField(primary_key=True, max_length=200)
     product_uid = models.CharField(max_length=200)
     member_id = models.CharField(max_length=200)
     pay = models.CharField(max_length=20)
-    requestid = models.CharField(max_length=200)
+    order_money = models.IntegerField()
+    order_password = models.CharField(max_length=200)
+    order_email = models.CharField(max_length=100)
+    order_phone = models.CharField(max_length=100)
+    order_postcode = models.IntegerField()
+    order_roadAddress = models.CharField(max_length=100)
+    order_detailAddress = models.CharField(max_length=100)
     available_flag = models.BooleanField(default=True)
 
     class Meta:
-        db_table = 'order'
+        db_table = 'order_info'
 
 
-class order_info(models.Model):
+class order_detail(models.Model):
     num = models.BigAutoField(primary_key=True)
     id_uid = models.CharField(max_length=200)
     product_uid = models.CharField(max_length=200)
@@ -89,4 +95,4 @@ class order_info(models.Model):
     updatetime = models.DateField(auto_now=datetime.now())
 
     class Meta:
-        db_table = 'order_info'
+        db_table = 'order_detail'

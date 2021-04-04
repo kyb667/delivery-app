@@ -1,0 +1,37 @@
+{% extends "./order_mainpage.html" %}
+{% load static %}
+{% block cartindex %}
+<ul>
+  <li><a href="{% url 'index' %}">Home</a></li>
+  <li><a href="{% url 'cart' %}">cart</a></li>
+</ul>
+{% endblock %}
+{% block cart %}
+<div class="content three_quarter"> 
+  <!-- ################################################################################################ -->
+  <h1>담긴 상품</h1>
+  <br/>
+      <div class="scrollable">
+        <table>
+          <thead>
+            <tr>
+              <th>상품명</th>
+              <th>품목</th>
+              <th>금액</th>
+              <th>개수</th>
+              <th>총액</th>
+              <th>상품수량변경</th>
+              <th>상품 제거</th>
+            </tr>
+          </thead>
+          <tbody id="order_cart_body">
+          </tbody>
+        </table>
+      </div>
+      <br/>
+      <div id="comments">
+        <input type='submit' onclick="location.href='../order'"  value='주문하기'> &nbsp; <input type='submit' onclick="location.href='../recipe'" value='계속 쇼핑하기'>
+      </div>
+      <br/>
+</div>
+{% endblock %}

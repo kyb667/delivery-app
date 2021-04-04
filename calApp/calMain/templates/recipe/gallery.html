@@ -3,8 +3,8 @@
 {% load mathfilters %}
 {% block index %}
     <ul>
-      <li><a href="#">Home</a></li>
-      <li><a href="#">recipe</a></li>
+      <li><a href="{% url  'index' %}">Home</a></li>
+      <li><a href="{% url  'recipe' %}">recipe</a></li>
     </ul>
 {% endblock %}
 

@@ -1,6 +1,11 @@
 {% extends "./order_mainpage.html" %}
 {% load static %}
-
+{% block cartindex %}
+<ul>
+  <li><a href="{% url 'index' %}">Home</a></li>
+  <li><a href="{% url 'order_check' %}">order_check</a></li>
+</ul>
+{% endblock %}
 {% block orderdetail %}
 <div class="content three_quarter"> 
   <!-- ################################################################################################ -->
@@ -9,8 +14,25 @@
   <p>기타 문의사항은 <a href="#">Q&A</a> 창을 이용해주시기 바랍니다</p>
   <br/>
   <div id="comments">
-    <input type="submit" name="submit" id="check_order_by_num" value='송장번호로 검색하기'>
-    <input type="submit" name="submit" id="check_order_by_id" value='아이디로 검색하기'>
+    {% if request.session.name %}
+    <form action="../order-history" method="POST">
+      {% csrf_token %}
+      <div class="one_third first">
+        <label for="name">ID <span>*</span></label>
+        <input type="text" id="id" name="id" value="{{ request.session.name }}">
+      </div>
+      <div class="one_third">
+        <label for="name">PW <span>*</span></label>
+        <input type="password" id="pw" name="pw" placeholder="비밀번호를 입력해주세요">
+      </div>
+      <div class="one_third first">
+        <input type="submit" value='내 주문목록 보기'>
+      </div>
+    </form>
+    {% else %}
+      <input type="submit" name="submit" id="check_order_by_num" value='송장번호로 검색하기'>
+      <input type="submit" name="submit" id="check_order_by_id" value='아이디로 검색하기'>
+    {% endif %}
   </div>
   <br/>
   <div id="comments">
@@ -18,7 +40,7 @@
       {% csrf_token %}
       <div id="check_order_form">
       </div>
-  </form>
+    </form>
   </div>
   <br/>
   <br/>

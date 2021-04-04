@@ -49,8 +49,11 @@ urlpatterns = [
 
     # order
     path('order/', order.home, name='order_home'),
+    path('cart/', order.cart, name='cart'),
     path('order/requestCode', order.requestCode, name='requestCode'),
     path('order-success', order.order_success, name='order_success'),
+    path('order-finish', order.order_finish, name='order_finish'),
     path('order-check', order.order_check, name='order_check'),
     path('order-history', order.order_history, name='order_history'),
+    path('order-login-check', order.order_login_check, name='order_login_check'),
 ]

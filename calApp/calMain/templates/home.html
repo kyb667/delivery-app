@@ -75,35 +75,7 @@
       <!-- ################################################################################################ -->
     </header>
   </div>
-  <div id="myModal" class="modal">
-    <div class="modal-content">
-      <div class="scrollable">
-        <p style="text-align: right;"><span style="font-size: 14pt;" class="pop_bt"><i class="fa fa-times-circle"></i></span></p>
-        <p style="text-align: center;"><span style="font-size: 14pt;"><b><i class="fa fa-shopping-basket"></i>
-          <span style="font-size: 24pt;">cart</span></b></span></p>
-          <table>
-            <thead>
-              <tr>
-                <th>상품명</th>
-                <th>품목</th>
-                <th>금액</th>
-                <th>개수</th>
-                <th>총액</th>
-                <th>상품수량변경</th>
-                <th>상품 제거</th>
-              </tr>
-            </thead>
-            <tbody id="cart_body">
-            </tbody>
-          </table>
-          <br/>
-          <p class="more"><a href="{% url 'order_home' %}">&raquo; 구매하러가기 </a></p>
-          <p >
-            <a href="" style="color: black;"></a>
-        </p>
-      </div>
-    </div>
-  </div>
+
   {% block home %}
   {% endblock %}
   <div class="wrapper row4 bgded overlay" style="background-image:url('images/demo/backgrounds/03.png');">
@@ -166,6 +138,36 @@
       <p class="fl_left">Copyright &copy; 2018 - All Rights Reserved - <a href="#">Domain Name</a></p>
       <p class="fl_right">Template by <a target="_blank" href="https://www.os-templates.com/" title="Free Website Templates">OS Templates</a></p>
       <!-- ################################################################################################ -->
+    </div>
+  </div>
+  <div id="myModal" class="modal">
+    <div class="modal-content">
+      <div class="scrollable">
+        <p style="text-align: right;"><span style="font-size: 14pt;" class="pop_bt"><i class="fa fa-times-circle"></i></span></p>
+        <p style="text-align: center;"><span style="font-size: 14pt;"><b><i class="fa fa-shopping-basket"></i>
+          <span style="font-size: 24pt;">cart</span></b></span></p>
+          <table>
+            <thead>
+              <tr>
+                <th>상품명</th>
+                <th>품목</th>
+                <th>금액</th>
+                <th>개수</th>
+                <th>총액</th>
+                <th>상품수량변경</th>
+                <th>상품 제거</th>
+              </tr>
+            </thead>
+            <tbody id="cart_body">
+            </tbody>
+          </table>
+          <br/>
+          <p class="more"><a href="{% url 'cart' %}">&raquo; 담긴상품 확인하기 </a></p>
+          <p class="more"><a href="{% url 'order_home' %}">&raquo; 구매하러가기 </a></p>
+          <p >
+            <a href="" style="color: black;"></a>
+        </p>
+      </div>
     </div>
   </div>
 
