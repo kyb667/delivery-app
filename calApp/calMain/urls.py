@@ -39,6 +39,7 @@ urlpatterns = [
 
     # recipe
     path('recipe/', recipe.index, name='recipe'),
+    path('getlovenum', recipe.getlovenum, name='getlovenum'),
     path('recipe/getRecipeNames/<str:name>/',
          recipe.getRecipeNames, name='getRecipeNames'),
     path('recipe/getRecipeTypes/', recipe.getRecipeTypes, name='getRecipeTypes'),
@@ -56,4 +57,5 @@ urlpatterns = [
     path('order-check', order.order_check, name='order_check'),
     path('order-history', order.order_history, name='order_history'),
     path('order-login-check', order.order_login_check, name='order_login_check'),
+    path('get-order-detail', order.get_order_detail, name='get_order_detail'),
 ]

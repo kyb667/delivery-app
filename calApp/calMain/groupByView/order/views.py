@@ -110,3 +110,23 @@ def order_login_check(request):
     now = str(int(datetime.now().timestamp() * 1000))
     user = user if user else randomid+'_' + now
     return JsonResponse({'name': user})
+
+
+def get_order_detail(request):
+    id = request.GET.get('id', None)
+    orderDetailList = order_detail.objects.select_related(
+        'id_uid', 'recipe_id').filter(id_uid=id)
+    returnList = []
+    for i in orderDetailList:
+        body = {}
+        body['id_uid'] = i.id_uid.id_uid
+        body['member_id'] = i.member_id
+        body['recipename'] = i.recipe_id.recipename
+        body['foodname'] = i.recipe_id.food_name.foodname
+        body['recipe_id'] = i.recipe_id.recipeid
+        body['price'] = i.recipe_id.price
+        body['count'] = i.count
+        body['ordertime'] = i.ordertime
+        print(body)
+        returnList.append(body)
+    return JsonResponse({'orderDetailList': returnList})

@@ -61,3 +61,14 @@ def showRecipeDetail(request, recipename, id):
             recipe_id=id).values().order_by('recipedetailnum')
         recipeDetailInfo = [dict(i) for i in recipeDetailInfo]
         return render(request, 'recipe/detail.html', {'recipeinfo': info[0], 'fooddetail': fooddetail, 'recipeDetailInfo': recipeDetailInfo})
+
+
+def getlovenum(request):
+    recipeid = request.GET['id']
+    print(recipeid)
+    recipe.objects.filter(recipeid=recipeid).update(
+        recipelove=F('recipelove')+1)
+    recipedetail = recipe.objects.filter(
+        recipeid=recipeid).values()
+    recipedetail = [dict(i) for i in recipedetail][0]
+    return JsonResponse({'lovenum': recipedetail['recipelove']})

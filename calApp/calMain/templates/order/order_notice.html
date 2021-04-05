@@ -29,7 +29,7 @@
         </tr>
         {% for i in orderList %}
           <tr>
-            <td><a href="">{{ i.id_uid }}</a></td>
+            <td><a class="show_order_detail">{{ i.id_uid }}</a></td>
             <td>{{ i.pay }}</td>
             <td>{{ i.order_money }}</td>
             <td>{{ i.order_email }}</td>
@@ -54,4 +54,52 @@
   <br/>
   <br/>
 </div>
+<div id="show_order_detail_modal" class="show_order_detail_modal">
+  <nav class="pagination">
+    <div class="show_order_detail_modal-content">
+      <div id="comments">
+      <p>상품 목록</p>
+        <table>
+          <thead>
+            <th>주문번호</th>
+            <th>음식명</th>
+            <th>갯수</th>
+            <th>가격</th>
+            <th>주문시간</th>
+          </thead>
+          <tbody id="show_orderList">
+          </tbody>
+        </table>
+        <input type='submit' id="close_order_modal" value='닫기'>
+      </div>
+    </div>
+  </nav>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="{% static 'order/order_notice.js' %}"></script>
+<style>
+  .show_order_detail_modal {
+    color: black;
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
+
+    /* Modal Content/Box */
+    .show_order_detail_modal-content {
+      overflow: auto;/* Enable scroll if needed */
+        background-color: #fefefe;
+        margin: 15% auto; /* 15% from the top and centered */
+        padding: 1%;
+        border: 1px solid #888;
+        width: 80%; /* Could be more or less, depending on screen size */   
+        height: 50%;              
+    }
+  </style>
 {% endblock %}
