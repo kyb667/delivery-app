@@ -39,7 +39,8 @@ urlpatterns = [
 
     # recipe
     path('recipe/', recipe.index, name='recipe'),
-    path('getlovenum', recipe.getlovenum, name='getlovenum'),
+    path('addlovenum', recipe.addlovenum, name='addlovenum'),
+    path('addhatenum', recipe.addhatenum, name='addhatenum'),
     path('recipe/getRecipeNames/<str:name>/',
          recipe.getRecipeNames, name='getRecipeNames'),
     path('recipe/getRecipeTypes/', recipe.getRecipeTypes, name='getRecipeTypes'),
@@ -47,6 +48,7 @@ urlpatterns = [
     path('recipe/<str:name>/', recipe.detailRecipe, name='detailRecipe'),
     path('showrecipe/<str:recipename>_<str:id>/',
          recipe.showRecipeDetail, name='showRecipeDetail'),
+    path('getTopthree', recipe.getTopthree, name='getTopthree'),
 
     # order
     path('order/', order.home, name='order_home'),

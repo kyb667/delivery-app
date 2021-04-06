@@ -19,8 +19,8 @@ def detailRecipe(request, name):
     if name:
         recipeInfo = recipe.objects.filter(food_name=name).values()
         if recipeInfo:
-            recipeInfo = [dict(i) for i in recipeInfo]
-            print(recipeInfo)
+            for i in recipeInfo:
+                recipeInfo = [dict(i) for i in recipeInfo]
             return JsonResponse({'recipeInfo': recipeInfo})
         return JsonResponse({'recipeInfo': None})
 
@@ -41,6 +41,8 @@ def getRecipeTypes(reqeust):
 def select(reqeust):
     selectList = reqeust.GET['selectList']
     group = reqeust.GET['group']
+    print(selectList)
+    print(group)
     if selectList:
         if group == 'recipetype':
             recipeList = food.objects.filter(
@@ -52,23 +54,44 @@ def select(reqeust):
 
 
 def showRecipeDetail(request, recipename, id):
-    info = recipe.objects.filter(recipeid=id).values()
-    info = [dict(i) for i in info]
+    info = recipedetail.objects.select_related(
+        'recipe_id').filter(recipe_id=id).order_by('recipedetailnum')
     if info:
-        fooddetail = food.objects.filter(
-            foodname=info[0]['food_name_id']).values('fooddetail').first()
-        recipeDetailInfo = recipedetail.objects.filter(
-            recipe_id=id).values().order_by('recipedetailnum')
-        recipeDetailInfo = [dict(i) for i in recipeDetailInfo]
-        return render(request, 'recipe/detail.html', {'recipeinfo': info[0], 'fooddetail': fooddetail, 'recipeDetailInfo': recipeDetailInfo})
+        recipeInfo = {}
+        foodDetail = None
+        recipeDetailInfo = []
+        for i in info:
+            foodDetail = i.recipe_id.food_name.fooddetail if foodDetail is None else foodDetail
+            recipeInfo = i.recipe_id.__dict__ if not recipeInfo else recipeInfo
+            recipeDetailInfo.append(i.__dict__)
+        return render(request, 'recipe/detail.html', {'fooddetail': foodDetail, 'recipeinfo': recipeInfo, 'recipedetailinfo': recipeDetailInfo})
 
 
-def getlovenum(request):
+def addlovenum(request):
     recipeid = request.GET['id']
-    print(recipeid)
     recipe.objects.filter(recipeid=recipeid).update(
         recipelove=F('recipelove')+1)
     recipedetail = recipe.objects.filter(
         recipeid=recipeid).values()
-    recipedetail = [dict(i) for i in recipedetail][0]
+    recipedetail = recipedetail.__dict__
+    print(recipedetail)
     return JsonResponse({'lovenum': recipedetail['recipelove']})
+
+
+def addhatenum(request):
+    recipeid = request.GET['id']
+    recipe.objects.filter(recipeid=recipeid).update(
+        recipehate=F('recipehate')+1)
+    recipedetail = recipe.objects.filter(
+        recipeid=recipeid).values()
+    recipedetail = recipedetail.__dict__
+    return JsonResponse({'hatenum': recipedetail['recipehate']})
+
+
+def getTopthree(request):
+    threeVal = recipe.objects.select_related(
+        'recipeid').values().order_by('-recipelove')[:3]
+    threeList = []
+    for i in threeVal:
+        threeList.append(i)
+    return JsonResponse({'threeList': threeList})

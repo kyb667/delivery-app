@@ -1,11 +1,23 @@
 $('#likeit').on('click',function(){
     var id = $(this).data("id")
     $.ajax({
-        url:'../../getlovenum',
+        url:'../../addlovenum',
         data:{'id':id},
         dataType: 'json',
         success: function(data){
             $('#lovenum').text(data['lovenum'])
+        }
+    })
+});
+
+$('#hateit').on('click',function(){
+    var id = $(this).data("id")
+    $.ajax({
+        url:'../../addhatenum',
+        data:{'id':id},
+        dataType: 'json',
+        success: function(data){
+            $('#hatenum').text(data['hatenum'])
         }
     })
 });

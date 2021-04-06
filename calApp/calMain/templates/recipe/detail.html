@@ -3,24 +3,24 @@
 {% load mathfilters %}
 {% block index %}
     <ul>
-      <li><a href="#">Home</a></li>
-      <li><a href="#">recipe</a></li>
-      <li><a href="#" id="fooddetail">{{ fooddetail.fooddetail }}</a></li>
-      <li><a href="#" id="recipename">{{ recipeinfo.recipename }}</a></li>
+      <li><a href="{% url  'index' %}">Home</a></li>
+      <li><a href="{% url  'recipe' %}">recipe</a></li>
+      <li><a href="{% url  'select' %}" id="fooddetail">{{ fooddetail }}</a></li>
+      <li><a href="{% url 'showRecipeDetail' recipeinfo.recipename recipeinfo.recipeid %}" id="recipename">{{ recipeinfo.recipename }}</a></li>
     </ul>
 {% endblock %}
 
 {% block foodgallery %}
       <h1>{{ recipeinfo.recipename }}</h1>
-      <i class="fa fa-thumbs-up"></i><a id="likeit" name="likeit" data-id="{{ foodid }}">like it <span id="lovenum"> {{ recipeinfo.recipelove }} </span></a> &nbsp;&nbsp;&nbsp;
-      <i class="fa fa-thumbs-down"></i> <a>hate it <span> {{ recipeinfo.recipehate }} </span> </a>&nbsp;&nbsp;&nbsp;
+      <i class="fa fa-thumbs-up"></i><a id="likeit" name="likeit" data-id="{{ recipeinfo.recipeid }}">like it <span id="lovenum"> {{ recipeinfo.recipelove }} </span></a> &nbsp;&nbsp;&nbsp;
+      <i class="fa fa-thumbs-down"></i> <a id="hateit" name="hateit" data-id="{{ recipeinfo.recipeid }}">hate it <span id="hatenum"> {{ recipeinfo.recipehate }} </span> </a>&nbsp;&nbsp;&nbsp;
       <i class="fa fa-shopping-basket"></i> <a class="addcart" name="{{ recipeinfo.recipeid }}"> 장바구니 담기 </a>
       <p id="price">{{ recipeinfo.price }} 원</p>
       <p>{{ recipeinfo.recipesummary }}</p>
       <h1>조리과정</h1>
       <div id="comments">
         <ul>
-          {% for i in recipeDetailInfo %}
+          {% for i in recipedetailinfo %}
           <li>
             <article>
               <header>

@@ -1,4 +1,5 @@
 {% extends "./home.html" %}
+{% load static %}
   {% block home %}
   
   <div id="pageintro" class="hoc clear"> 
@@ -55,34 +56,7 @@
       <h3 class="heading">인기상품</h3>
       <p class="nospace">다이어터들이 가장 많이 먹는 상품</p>
     </div>
-    <ul class="nospace group center">
-      <li class="one_third first">
-        <article><a class="inverse" href="#">
-          <img src="../static/calMain/images/our-work/img-1.jpg" alt="height=auto">
-        </a>
-          <h6 class="heading font-x1">Ipsum quis purus</h6>
-          <p>Consectetur massa in tristique placerat integer dui dui fringilla id mi ut malesuada scelerisque arcu pellentesque&hellip;</p>
-          <footer><a href="#">Read More &raquo;</a></footer>
-        </article>
-      </li>
-      <li class="one_third">
-        <article><a class="inverse" href="#">
-          <img src="../static/calMain/images/our-work/img-2.jpg" alt="height=auto">
-        </a>
-          <h6 class="heading font-x1">Tincidunt at mauris</h6>
-          <p>Tristique senectus et netus et malesuada fames ac turpis egestas pellentesque erat nibh efficitur quis sapien&hellip;</p>
-          <footer><a href="#">Read More &raquo;</a></footer>
-        </article>
-      </li>
-      <li class="one_third">
-        <article><a class="inverse" href="#">
-          <img src="../static/calMain/images/our-work/img-3.jpg" alt="height=auto">
-        </a>
-          <h6 class="heading font-x1">Aliquam orci volutpat</h6>
-          <p>Dolor nam dictum eu neque in blandit vestibulum suscipit interdum faucibus praesent euismod venenatis&hellip;</p>
-          <footer><a href="#">Read More &raquo;</a></footer>
-        </article>
-      </li>
+    <ul class="nospace group center" id="product_top3">
     </ul>
     <!-- ################################################################################################ -->
     <!-- / main body -->
@@ -166,5 +140,6 @@
 <!-- ################################################################################################ -->
 <!-- ################################################################################################ -->
 <!-- ################################################################################################ -->
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="{% static 'main/index.js' %}"></script>
 {% endblock %}
