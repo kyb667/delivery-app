@@ -41,8 +41,6 @@ def getRecipeTypes(reqeust):
 def select(reqeust):
     selectList = reqeust.GET['selectList']
     group = reqeust.GET['group']
-    print(selectList)
-    print(group)
     if selectList:
         if group == 'recipetype':
             recipeList = food.objects.filter(
@@ -88,10 +86,9 @@ def addhatenum(request):
     return JsonResponse({'hatenum': recipedetail['recipehate']})
 
 
-def getTopthree(request):
-    threeVal = recipe.objects.select_related(
-        'recipeid').values().order_by('-recipelove')[:3]
-    threeList = []
-    for i in threeVal:
-        threeList.append(i)
-    return JsonResponse({'threeList': threeList})
+def findRecipe(request):
+    if request.method == 'POST':
+        if request.POST['name']:
+            valList = recipe.objects.filter(
+                food_name=request.POST['name']).values()
+            return HttpResponse(valList)

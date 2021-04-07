@@ -1,6 +1,5 @@
 $(document).ready(function(){
     $('#order_cart_body').empty()
-    console.log(JSON.parse(localStorage.getItem("cart")))
     var order_cart_body = document.querySelector('#order_cart_body')
     if (localStorage.getItem("cart") == null){
         html = "<tr style='background-color: white;'><td colspan='7' style='background-color: white;'>&nbsp</td></tr><tr style='text-align:center background-color: white;'><td colspan='7' style='background-color: white; text-align:center'>카트에 담긴 상품이 없습니다</td></tr><tr style='background-color: white;'><td colspan='7' style='background-color: white;'>&nbsp</td></tr>"
@@ -13,7 +12,6 @@ $(document).ready(function(){
         var order_cart_body = document.querySelector('#order_cart_body')
         var cartList = JSON.parse(localStorage.getItem("cart"))
         cntAll = 0
-        console.log(cartList)
         for (var recipeid in cartList[0]){
             val = cartList[0][recipeid]
             cntAll += val['cnt']

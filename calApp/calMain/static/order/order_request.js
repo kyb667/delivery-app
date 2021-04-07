@@ -80,7 +80,6 @@ $(document).on('click', '#order_product', function(){
     })
 })
 function paymentFunc(impCode, cart, member_id, order_dict){
-    console.log(impCode, cart, member_id, order_dict)
     cart_len =　$('#cart_all_cnt').text()
     recipename = ''
     for (var recipeid in cart[0]){
@@ -107,9 +106,7 @@ function paymentFunc(impCode, cart, member_id, order_dict){
         buyer_addr :  order_dict['order_roadAddress'] + ' ' + order_dict['order_detailAddress'],
         buyer_postcode :  order_dict['order_postcode']
     }, function(rsp) {
-        console.log(rsp)
         if ( rsp.success ) {
-            console.log(rsp)
             var msg = '결제가 완료되었습니다.';
             msg += '고유ID : ' + rsp.imp_uid;
             msg += '상점 거래ID : ' + rsp.merchant_uid;
@@ -140,7 +137,6 @@ function paymentFunc(impCode, cart, member_id, order_dict){
                        'id':JSON.stringify({'member_id':member_id}), 'order_dict':JSON.stringify(order_dict)},
                 dataType : 'json',
                 success:function(data){
-                    console.log(data)
                     id = data['member_id']
                     location.href = "../order-finish?id=" + id;
                 }

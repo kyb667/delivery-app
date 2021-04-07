@@ -22,6 +22,8 @@ from django.urls import path
 
 urlpatterns = [
     path('', views.index, name='index'),
+    path('getTopthree', views.getTopthree, name='getTopthree'),
+    path('getPopularProdect', views.getPopularProdect, name='getPopularProdect'),
 
     # user
     path('account/', user.account, name='account'),
@@ -46,9 +48,9 @@ urlpatterns = [
     path('recipe/getRecipeTypes/', recipe.getRecipeTypes, name='getRecipeTypes'),
     path('recipe/select', recipe.select, name='select'),
     path('recipe/<str:name>/', recipe.detailRecipe, name='detailRecipe'),
+    path('showrecipe', recipe.findRecipe, name='findRecipe'),
     path('showrecipe/<str:recipename>_<str:id>/',
          recipe.showRecipeDetail, name='showRecipeDetail'),
-    path('getTopthree', recipe.getTopthree, name='getTopthree'),
 
     # order
     path('order/', order.home, name='order_home'),

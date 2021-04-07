@@ -203,7 +203,6 @@ $(document).on("click",".select_recipe_group", function(){
 })
 //처음 로드
 $(function(){
-    console.log(1)
     selectRecipe('', 'all')
 })
 //직접검색 표시
@@ -221,7 +220,6 @@ function select_search_word(target){
                 html = ''
                 for (var i = 0; i < data.length; i++){
                     info = data[i]
-                    console.log(info)
                     html += '<li style="background-color:#F7F7F7" class="show_recipedetail" name="'+ info.foodname +'"><a>'+ info.foodname +'</a></li>'
                 }
                 list.innerHTML = html;
