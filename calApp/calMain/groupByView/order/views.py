@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 import bcrypt
 import json
-from ...models import order_info, order_detail, member
+from ...models import order_info, order_detail, member, recipe
 from ... import common
 from datetime import datetime
 import time
@@ -41,18 +41,6 @@ def order_success(request):
         order_dict = json.loads(request.POST['order_dict'])
         insertList = []
         money = 0
-        for num, cart in cartList.items():
-            money += int(cart["money"].split(' ')[0])
-            insert_order_product = {'id_uid': orderInfo["imp_uid"],
-                                    'product_uid': orderInfo["merchant_uid"],
-                                    'member_id': user,
-                                    'recipe_id': num,
-                                    'count': cart["cnt"],
-                                    'price': cart['price'],
-                                    'ordertime': datetime.now(),
-                                    'updatetime': datetime.now()}
-            insertList.append(order_detail(**insert_order_product))
-        order_detail.objects.bulk_create(insertList)
         insert_order = {'id_uid': orderInfo["imp_uid"],
                         'product_uid': orderInfo["merchant_uid"],
                         'member_id': user,
@@ -65,7 +53,19 @@ def order_success(request):
                         'order_roadAddress': order_dict["order_roadAddress"],
                         'order_detailAddress': order_dict["order_detailAddress"]}
         order_info.objects.create(**insert_order)
-    return JsonResponse({'member_id': user[:]})
+        for num, cart in cartList.items():
+            money += int(cart["money"].split(' ')[0])
+            insert_order_product = {'id_uid': order_info(orderInfo["imp_uid"]),
+                                    'product_uid': orderInfo["merchant_uid"],
+                                    'member_id': user,
+                                    'recipe_id': recipe(recipeid=num),
+                                    'count': cart["cnt"],
+                                    'price': cart['price'],
+                                    'ordertime': datetime.now(),
+                                    'updatetime': datetime.now()}
+            insertList.append(order_detail(**insert_order_product))
+        order_detail.objects.bulk_create(insertList)
+        return JsonResponse({'member_id': user[:]})
 
 
 def order_history(request):

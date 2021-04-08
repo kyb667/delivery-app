@@ -48,7 +48,6 @@ urlpatterns = [
     path('recipe/getRecipeTypes/', recipe.getRecipeTypes, name='getRecipeTypes'),
     path('recipe/select', recipe.select, name='select'),
     path('recipe/<str:name>/', recipe.detailRecipe, name='detailRecipe'),
-    path('showrecipe', recipe.findRecipe, name='findRecipe'),
     path('showrecipe/<str:recipename>_<str:id>/',
          recipe.showRecipeDetail, name='showRecipeDetail'),
 

@@ -25,30 +25,38 @@ def detailRecipe(request, name):
         return JsonResponse({'recipeInfo': None})
 
 
-def getRecipeNames(reqeust, name):
+def getRecipeNames(request, name):
     foodNameList = food.objects.filter(
         foodname__icontains=name).values('foodname')[:10]
     return JsonResponse({'recipenames': list(foodNameList)})
 
 
-def getRecipeTypes(reqeust):
+def getRecipeTypes(request):
     recipetypes = food.objects.values(
         'fooddetail').annotate(count=Count('foodname'))
     recipetypes = [dict(i) for i in recipetypes]
     return JsonResponse({'recipetypes': recipetypes})
 
 
-def select(reqeust):
-    selectList = reqeust.GET['selectList']
-    group = reqeust.GET['group']
-    if selectList:
-        if group == 'recipetype':
-            recipeList = food.objects.filter(
-                fooddetail=selectList).values()
+def select(request):
+    if request.method == 'GET':
+        selectList = request.GET['selectList']
+        group = request.GET['group']
+        if selectList:
+            if group == 'recipetype':
+                recipeList = food.objects.filter(
+                    fooddetail=selectList).values()
+        else:
+            recipeList = food.objects.all().values()
+        recipeList = [dict(i) for i in recipeList]
+        return JsonResponse({'data': recipeList})
     else:
-        recipeList = food.objects.all().values()
-    recipeList = [dict(i) for i in recipeList]
-    return JsonResponse({'data': recipeList})
+        if request.POST['name']:
+            valList = recipe.objects.filter(
+                food_name__foodname__icontains=request.POST['name']).values()
+            valList = [dict(i) for i in valList]
+            print(valList)
+            return render(request, 'recipe/gallery.html', {'findList': valList})
 
 
 def showRecipeDetail(request, recipename, id):
@@ -84,11 +92,3 @@ def addhatenum(request):
         recipeid=recipeid).values()
     recipedetail = recipedetail.__dict__
     return JsonResponse({'hatenum': recipedetail['recipehate']})
-
-
-def findRecipe(request):
-    if request.method == 'POST':
-        if request.POST['name']:
-            valList = recipe.objects.filter(
-                food_name=request.POST['name']).values()
-            return HttpResponse(valList)

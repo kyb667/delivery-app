@@ -138,7 +138,8 @@ function paymentFunc(impCode, cart, member_id, order_dict){
                 dataType : 'json',
                 success:function(data){
                     id = data['member_id']
-                    location.href = "../order-finish?id=" + id;
+                    location.href = "../order-finish";
+                    $('#order_follow').show()
                 }
             })
         }    

@@ -33,9 +33,23 @@
   </div>
 
   <div id="gallery">
+    
     <figure>
       <header class="heading">recipe</header>
-      <ul class="nospace clear" id="show_recipe_list">
+      <ul class="nospace clear" {% if not findList %} id="show_recipe_list" {% endif %}>
+        {% if findList %}
+        {% for obj in findList %}
+        {% if forloop.counter|mod:4 == 1 %}
+        <li class="one_quarter show_recipedetail first" name="">
+        {% else%}
+        <li class="one_quarter show_recipedetail" name="">
+        {% endif %}
+        <a href="../showrecipe/{{obj.recipename}}_{{obj.recipeid}}/">
+        <div>{{ obj.recipename }}</div>
+        {{ obj.price }}</a>
+        </li>
+        {% endfor %}
+        {% endif %}
       </ul>
     </figure>
   </div>
@@ -46,6 +60,6 @@
   </nav>
   
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-  <script src="{% static 'maxisonix/ajax/recipe.js' %}"></script>
+  <script src="{% static 'recipe/gallery.js' %}"></script>
   
 {% endblock %} -->
