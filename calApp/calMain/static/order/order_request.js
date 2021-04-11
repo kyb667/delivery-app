@@ -89,7 +89,11 @@ function paymentFunc(impCode, cart, member_id, order_dict){
         }
         break;
     }
-    recipename = recipename + ' 외 '+ cart_len +' 건'
+    if (cart_len > 0){
+        recipename = recipename + ' 외 '+ cart_len +' 건'
+    }else{
+        recipename = recipename
+    }
     var IMP = window.IMP;
     var token = getCookie('csrftoken');
     IMP.init(impCode);
@@ -137,11 +141,17 @@ function paymentFunc(impCode, cart, member_id, order_dict){
                        'id':JSON.stringify({'member_id':member_id}), 'order_dict':JSON.stringify(order_dict)},
                 dataType : 'json',
                 success:function(data){
+                    var renewUrl = location.href;
+                    renewUrl = renewUrl.replace(/\/order/ig,'')
+                    renewUrl += 'order-finish'
                     id = data['member_id']
-                    location.href = "../order-finish";
+                    $('#body').children().remove();
+                    $('#body').load("../order-finish")
+                    history.pushState(null,null,renewUrl)
                     $('#order_follow').show()
-                }
-            })
+                    $('#order_follow').hide(3000)
+                },
+            });
         }    
         alert(msg)
     });

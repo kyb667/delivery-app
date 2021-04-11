@@ -34,7 +34,7 @@
       <br/>
       <div id="comments" class="order_version_btn">
         {% if not request.session.name %}
-        <input type='submit' onclick="location.href='../account'" value='로그인 후 주문서 작성'> &nbsp; 
+        <input type='submit' onclick="location.href='../login'" value='로그인 후 주문서 작성'> &nbsp; 
         <input type='submit' id="order_by_unknown" value='비회원 주문서 작성'>
         {% else %}
         <input type='submit' id="order_by_user"  value='주문서 작성'> &nbsp; 
