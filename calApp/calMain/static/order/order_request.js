@@ -144,12 +144,11 @@ function paymentFunc(impCode, cart, member_id, order_dict){
                     var renewUrl = location.href;
                     renewUrl = renewUrl.replace(/\/order/ig,'')
                     renewUrl += 'order-finish'
-                    id = data['member_id']
-                    $('#body').children().remove();
-                    $('#body').load("../order-finish")
+                    calculate()
+                    $('#top').children().remove();
+                    $('#top').load("../order-finish")
                     history.pushState(null,null,renewUrl)
-                    $('#order_follow').show()
-                    $('#order_follow').hide(3000)
+                    
                 },
             });
         }    

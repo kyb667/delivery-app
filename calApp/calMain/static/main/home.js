@@ -1,6 +1,13 @@
+var modaltest = false
 $(document).ready(function(){
-    $('#order_follow').hide()
     hide_modal()
+    console.log(modaltest)
+    $('#order_follow').hide()
+    if (modaltest){
+        $('#order_follow').show()
+        modaltest = false
+    }
+    $('#order_follow').hide(3000)
     if (localStorage.getItem("cart") == null){
         existingEntries = []
         localStorage.setItem("cart", JSON.stringify(existingEntries))
@@ -49,6 +56,7 @@ function show_modal(){
 // hide cart
 function hide_modal(){
     $('#myModal').hide()
+    $('#find_map_modal').hide()
 }
 $('.pop_bt').click(function(){
     hide_modal()
@@ -158,3 +166,32 @@ $(document).on("click", ".fa-trash", function(){
     var $this = $(this)
     $this.parents('tr').remove()
 });
+
+// notification
+window.onload = function () {
+    if (window.Notification) {
+        Notification.requestPermission();
+    }
+}
+
+function calculate() {
+    setTimeout(function () {
+        notify();
+    }, 2000);
+}
+
+function notify() {
+    if (Notification.permission !== 'granted') {
+        alert('notification is disabled');
+    }
+    else {
+        var notification = new Notification('주문이 도착했습니다', {
+            icon: 'http://cdn.sstatic.net/stackexchange/img/logos/so/so-icon.png',
+            body: '어서 주문을 확인해보세요!',
+        });
+
+        notification.onclick = function () {
+            window.open('http://127.0.0.1:8001/order-check');
+        };
+    }
+}
