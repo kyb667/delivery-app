@@ -25,8 +25,16 @@ def order_check(request):
     return render(request, 'order/order_check.html')
 
 
-def order_finish(request):
-    return render(request, 'order/order_finish.html')
+# def order_finish(request):
+#     return render(request, 'order/order_finish.html')
+
+def order_finish(request, uid):
+    print(uid)
+    idList = order_detail.objects.filter(id_uid=uid).values('recipe_id')
+    idList = [i['recipe_id'] for i in list(idList)]
+    sellerList = recipe.objects.filter(recipeid__in=idList).values('seller_id')
+    sellerList = [i['seller_id'] for i in list(sellerList)]
+    return render(request, 'order/order_finish.html', {'uid': uid, 'val': sellerList})
 
 
 def requestCode(request):
@@ -104,11 +112,13 @@ def order_history(request):
 
 
 def order_login_check(request):
+    print(1)
     user = request.session.get('name')
     randomid = ''.join(map(str, [random.choice(
         string.ascii_letters) for i in range(5)]))
     now = str(int(datetime.now().timestamp() * 1000))
     user = user if user else randomid+'_' + now
+    print(user)
     return JsonResponse({'name': user})
 
 

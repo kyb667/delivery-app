@@ -17,9 +17,27 @@
   <br/>
   <!-- ################################################################################################ -->
 </div>
-<script type="text/javascript">
-  window.history.forward();
-  function noBack(){window.history.forward();}
+{{ uid|json_script:"uid" }}
+{{ val|json_script:"val" }}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+//   window.history.forward();
+//   function noBack(){window.history.forward();}
+$(document).ready(function(){
+    const uid = JSON.parse(document.getElementById('uid').textContent);
+    const val = JSON.parse(document.getElementById('val').textContent);
+    
+    for (var i in val){
+        const chatSocket = new WebSocket(
+            'ws://localhost:8080/'+ val[i]
+        );
+        chatSocket.onopen = function (event) {
+        chatSocket.send(JSON.stringify({
+            'message': uid
+        }));
+    };
+    }
+})
 </script>
-<body onload="noBack();" onpageshow="if(event.persisted) noBack();" onunload=""></body>
+ <!-- <body onload="noBack();" onpageshow="if(event.persisted) noBack();" onunload=""></body> -->
 {% endblock %}

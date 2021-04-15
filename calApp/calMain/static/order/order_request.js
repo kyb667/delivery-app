@@ -67,7 +67,11 @@ $(document).on('click', '#order_product', function(){
                         url:'../order-login-check',
                         dataType:'json',
                         success:function(data){
+                            hide_order_modal()
                             paymentFunc(impCode, cart, data['name'], order_dict)
+                        },
+                        error: function(data){
+                            console.log(data)
                         }
                     })
                     
@@ -141,14 +145,7 @@ function paymentFunc(impCode, cart, member_id, order_dict){
                        'id':JSON.stringify({'member_id':member_id}), 'order_dict':JSON.stringify(order_dict)},
                 dataType : 'json',
                 success:function(data){
-                    var renewUrl = location.href;
-                    renewUrl = renewUrl.replace(/\/order/ig,'')
-                    renewUrl += 'order-finish'
-                    calculate()
-                    $('#top').children().remove();
-                    $('#top').load("../order-finish")
-                    history.pushState(null,null,renewUrl)
-                    
+                    window.location.pathname = 'order-finish/' + rsp['imp_uid']
                 },
             });
         }    
