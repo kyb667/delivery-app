@@ -68,3 +68,32 @@ function insert_cart(recipeid,fooddetail,recipename, price){
     }
     
 }
+// 장바구니에 상품 담기
+function add_product(recipeid,fooddetail,recipename, price){
+    var cart = JSON.parse(localStorage.getItem("cart"))
+    console.log(cart)
+    if (cart.length > 0){
+        cart = cart[0]
+        val = parseInt($('.cnt_'+recipeid).text()) + 1
+        $('.money_' + recipeid).empty()
+        var price = $('.price_' + recipeid).text()
+        price = price.split(' ')
+        var money = price[0] * val
+        var won = price[1]
+        $('.cnt_'+recipeid).empty()
+        $('.cnt_'+recipeid).text(val)
+        $('.money_' + recipeid).empty()
+        $('.money_' + recipeid).text(money +' ' + won)
+        cart[recipeid]['cnt'] = val
+        cart[recipeid]['money'] = money +' ' + won
+        console.log(cart)
+        localStorage.setItem("cart", JSON.stringify([cart]))
+        $('#cart_all_cnt').text(parseInt($('#cart_all_cnt').text()) + 1 )
+    }else{
+        var cart_body = document.querySelector('#cart_body')
+        html = addTable('',recipeid,fooddetail,recipename, price)
+        $('#cart_all_cnt').text(1)
+        cart_body.innerHTML += html;
+    }
+    
+}

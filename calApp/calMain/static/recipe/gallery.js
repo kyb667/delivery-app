@@ -4,20 +4,6 @@ var maxIndex = 1;
 var direct_search_check = 0;
 var condition_search_check = 0;
 
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
 function selectRecipe(selectList, group){
     if ($('#show_recipe_list').length > 0){
         $.ajax({
@@ -49,7 +35,7 @@ function selectRecipe(selectList, group){
                 show_ul.innerHTML = show_html;
                 if (minPage > 0){ maxPage += 1 }
                 maxIndex = maxPage
-                if (maxPage > 10){ maxPage = 10 }
+                if (maxPage > 9){ maxPage = 9 }
                 if (data['data'].length > 0){
                     chage_html += '<li id="backPage"><a>&laquo; Previous</a></li>'
                 }
@@ -73,7 +59,8 @@ function selectRecipe(selectList, group){
         })
     }
 }
-function showRecipe(num){
+function showRecipe(showIndexNum){
+    index = showIndexNum
     if (allRecipeList){
         $('#show_recipe_list').empty();
         $('#chage_recipe').empty();
@@ -81,56 +68,64 @@ function showRecipe(num){
         chage_ul = document.querySelector('#chage_recipe')
         show_html = ''
         chage_html = ''
-        var listLen = allRecipeList.length
-        var len = 16 * (num -1)
-        var show_max = 16 * (num)
-        if (show_max > listLen){
-            show_max = listLen
+        var recipeLen = allRecipeList.length
+        var indexMaxLen = parseInt(recipeLen/16)
+        var showMinIndex = 0
+        var showMaxIndex = 0
+        var css = 0
+        if (recipeLen % 16 != 0){
+            indexMaxLen += 1
         }
-        for (var i = len; i < show_max ; i ++){
-            info = recipeList[i]
-            css = i + 1
-            first = ''
-            if (css % 4 == 1){ first = 'first' }
-            show_html += '<li class="one_quarter show_recipedetail ' + first +'" name="'+ info.recipename +'">' +
-            '<a><img src="' + info.recipeimage + '" alt=""></a>' +
-            '<div>' + info.recipename + '</div>' +
-            '<div>' + info.recipesummary + '</div></li>'
-        }
-        var maxPage = maxIndex
-        var minPage = num - 3
-        //TODO 보완이 필요함
-        if (num == maxIndex){
-            if (num > 9){
-                minPage = num - 9
-                maxPage = num
-            }else{
-                minPage = 1
-                maxPage = num
-            }
-            
+        maxIndex = indexMaxLen
+        if (showIndexNum <= 1){
+            showMinIndex = 0
+            showMaxIndex = 15
         }else{
-            // 뒷자리 체크
-            if (maxPage - num < 6){
-                a = 6 - (maxIndex - num)
-                minPage -= a
-            }else{
-                // 앞자리 체크
-                if (num <= 4){
-                    minPage = 1
-                    maxPage = 10
+            showMinIndex = 15*(showIndexNum-1) + (showIndexNum-1)
+            showMaxIndex = showMinIndex + 16
+        }
+        for (var i = showMinIndex; i <= showMaxIndex ; i ++){
+            info = allRecipeList[i]
+            css += 1
+            first = ''
+            if (info){
+                if (css % 4 == 1){ first = 'first' }
+                if ('foodname' in info){
+                    show_html += '<li class="one_quarter show_recipedetail '+ first +'" name="'+ info.foodname +'">' +
+                            '<a><img src="' + info.recipeimage + '" alt=""></a>' +
+                            '<div>' + info.foodname + '</div></li>'
                 }
                 else{
-                    if(num + 5 < maxPage){
-                        maxPage = num + 5
-                    }
-                } 
+                    show_html += '<li class="one_quarter '+ first +'">' +
+                                '<a href="../showrecipe/'+ info.recipename +'_'+ info.recipeid +'/">' +
+                                '<div>' + info.recipename + '</div>' + info.price + '</a></li>'
+                }
+            }else{
+                break
             }
         }
+        var minIndexBtn = 1
+        var maxIndexBtn = indexMaxLen
+        if (indexMaxLen > 9){
+            if (showIndexNum > indexMaxLen -4){
+                minIndexBtn = indexMaxLen - 8
+                maxIndexBtn = indexMaxLen
+            }else if (showIndexNum > 4){
+                if(showIndexNum <= indexMaxLen -4){
+                    minIndexBtn = showIndexNum - 4
+                    maxIndexBtn = showIndexNum + 4
+                }
+            }else{
+                minIndexBtn = 1
+                maxIndexBtn = 9
+            }
+            if (minIndexBtn < 1){minIndexBtn = 1}
+            if (maxIndexBtn > indexMaxLen){maxIndexBtn = indexMaxLen}
+        }
         chage_html += '<li id="backPage"><a>&laquo; Previous</a></li>'
-        for (var i = minPage; i <= maxPage; i++){
+        for (var i = minIndexBtn; i <= maxIndexBtn; i++){
             var css = ''
-            if (i == num){ css = 'current' }
+            if (i == showIndexNum){ css = 'current' }
             chage_html += '<li class="showPage ' + css +'" data-id="' + i +'">' +
                             ' <a>' + i +'</a>' +
                             '</li>'
@@ -249,18 +244,21 @@ $(document).on('click', '.show_recipedetail', function(){
             if (recipeList){
                 var len = recipeList.length
                 var maxPage = Math.floor(len / 16)
-                var minPage = len % 16
+                if(len % 16 !=0){maxPage += 1}
                 if (len > 16){ len = 16 }
+                css = 1
                 for (var i = 0; i < len; i++){
                     info = recipeList[i]
-                    css = i + 1
-                    show_html += '<li><a href="../showrecipe/'+ info.recipename +'_'+ info.recipeid +'/">' +
-                    '<div>' + info.recipename + '</div>' + info.price + '</a></li>'
+                    css += 1
+                    first = ''
+                    if (css % 4 == 1){ first = 'first' }
+                    show_html += '<li class="one_quarter '+ first +'">' +
+                                '<a href="../showrecipe/'+ info.recipename +'_'+ info.recipeid +'/">' +
+                                '<div>' + info.recipename + '</div>' + info.price + '</a></li>'
                 }
                 show_ul.innerHTML = show_html;
-                if (minPage > 0){ maxPage += 1 }
                 maxIndex = maxPage
-                if (maxPage > 10){ maxPage = 10 }
+                if (maxPage > 9){ maxPage = 9 }
                 chage_html += '<li id="backPage"><a>&laquo; Previous</a></li>'
                 for ( var i = 1; i <= maxPage; i ++){
                     var css = ''

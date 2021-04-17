@@ -1,13 +1,7 @@
-var modaltest = false
 $(document).ready(function(){
     hide_modal()
-    console.log(modaltest)
-    $('#order_follow').hide()
-    if (modaltest){
-        $('#order_follow').show()
-        modaltest = false
-    }
-    $('#order_follow').hide(3000)
+    // $('#order_follow').hide()
+    // $('#order_follow').hide(3000)
     if (localStorage.getItem("cart") == null){
         existingEntries = []
         localStorage.setItem("cart", JSON.stringify(existingEntries))
@@ -34,7 +28,7 @@ $(document).ready(function(){
 
 
 // #####################cart show or hide################################
-// show cart
+// cart modal show
 $('#show_cart').click(function(){
     show_modal()
 })
@@ -53,7 +47,7 @@ function show_modal(){
     $('#myModal').show()
 }
 
-// hide cart
+// cart modal hide
 function hide_modal(){
     $('#myModal').hide()
     $('#find_map_modal').hide()
@@ -63,11 +57,28 @@ $('.pop_bt').click(function(){
 })
 
 
-//##################cart add update delete##########################
-// add
+//##################cart cnt update delete##########################
+// cart cnt plus
 $(document).on("click", ".fa-cart-plus", function(){
+    console.log(1111)
     var recipeid = $(this).attr('name');
-    add_product(recipeid)
+    console.log(recipeid)
+    var cart = JSON.parse(localStorage.getItem("cart"))[0]
+    console.log(cart)
+    var val = $('.cnt_'+recipeid).text()
+    console.log(val)
+    var price = $('.price_' + recipeid).text()
+    price = price.split(' ')[0]
+    console.log(price)
+    var money = price * val
+    cart[recipeid]['cnt'] = val
+    cart[recipeid]['money'] = money +' 원'
+    $('.cnt_' + recipeid).empty()
+    $('.cnt_'+ recipeid).text(val)
+    $('.money_' + recipeid).empty()
+    $('.money_' + recipeid).text(money +' 원')
+    // localStorage.setItem("cart", JSON.stringify([cart]))
+    $('#cart_all_cnt').text(parseInt($('#cart_all_cnt').text()) + 1 )
 });
 
 // add column
@@ -85,34 +96,9 @@ function addTable(html,recipeid,fooddetail,recipename, price, cnt=1){
     return html
 }
 
-//update
-// ctn plus
-function add_product(recipeid,fooddetail,recipename, price){
-    var cart = JSON.parse(localStorage.getItem("cart"))
-    if (cart.length > 0){
-        cart = cart[0]
-        val = parseInt($('.cnt_'+recipeid).text()) + 1
-        $('.money_' + recipeid).empty()
-        var price = $('.price_' + recipeid).text()
-        price = price.split(' ')
-        var money = price[0] * val
-        var won = price[1]
-        $('.cnt_'+recipeid).text(val)
-        $('.money_' + recipeid).text(money +' ' + won)
-        cart[recipeid]['cnt'] = val
-        cart[recipeid]['money'] = money +' ' + won
-        localStorage.setItem("cart", JSON.stringify([cart]))
-        $('#cart_all_cnt').text(parseInt($('#cart_all_cnt').text()) + 1 )
-    }else{
-        var cart_body = document.querySelector('#cart_body')
-        html = addTable('',recipeid,fooddetail,recipename, price)
-        $('#cart_all_cnt').text(1)
-        cart_body.innerHTML += html;
-    }
-    
-}
-// ctn minus
+// cart cnt minus
 $(document).on("click", ".fa-cart-arrow-down", function(){
+    console.log(2222)
     var cart = JSON.parse(localStorage.getItem("cart"))
     if (cart.length > 0){
         var recipeid = $(this).attr('name');
@@ -122,14 +108,18 @@ $(document).on("click", ".fa-cart-arrow-down", function(){
         }else{
             cart = cart[0]
             val = v - 1
-            $('.money_' + recipeid).empty()
             var price = $('.price_' + recipeid).text()
             price = price.split(' ')
             var money = price[0] * val
             var won = price[1]
             cart[recipeid]['cnt'] = val
             cart[recipeid]['money'] = money +' ' + won
-            $('.cnt_'+recipeid).text(val)
+            console.log(money)
+            console.log(val)
+            console.log(cart)
+            $('.cnt_' + recipeid).empty()
+            $('.cnt_'+ recipeid).text(val)
+            $('.money_' + recipeid).empty()
             $('.money_' + recipeid).text(money +' ' + won)
             localStorage.setItem("cart", JSON.stringify([cart]))
             $('#cart_all_cnt').text(parseInt($('#cart_all_cnt').text()) - 1 )
@@ -137,7 +127,7 @@ $(document).on("click", ".fa-cart-arrow-down", function(){
     }
 });
 
-//delete
+//cart product delete
 $(document).on("click", ".fa-trash", function(){
     var cart = JSON.parse(localStorage.getItem("cart"))
     var recipeid = $(this).attr('name');
@@ -166,32 +156,3 @@ $(document).on("click", ".fa-trash", function(){
     var $this = $(this)
     $this.parents('tr').remove()
 });
-
-// notification
-window.onload = function () {
-    if (window.Notification) {
-        Notification.requestPermission();
-    }
-}
-
-function calculate() {
-    setTimeout(function () {
-        notify();
-    }, 2000);
-}
-
-function notify() {
-    if (Notification.permission !== 'granted') {
-        alert('notification is disabled');
-    }
-    else {
-        var notification = new Notification('주문이 도착했습니다', {
-            icon: 'http://cdn.sstatic.net/stackexchange/img/logos/so/so-icon.png',
-            body: '어서 주문을 확인해보세요!',
-        });
-
-        notification.onclick = function () {
-            window.open('http://127.0.0.1:8001/order-check');
-        };
-    }
-}

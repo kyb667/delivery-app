@@ -25,11 +25,7 @@ def order_check(request):
     return render(request, 'order/order_check.html')
 
 
-# def order_finish(request):
-#     return render(request, 'order/order_finish.html')
-
 def order_finish(request, uid):
-    print(uid)
     idList = order_detail.objects.filter(id_uid=uid).values('recipe_id')
     idList = [i['recipe_id'] for i in list(idList)]
     sellerList = recipe.objects.filter(recipeid__in=idList).values('seller_id')

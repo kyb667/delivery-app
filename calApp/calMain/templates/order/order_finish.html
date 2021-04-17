@@ -33,7 +33,8 @@ $(document).ready(function(){
         );
         chatSocket.onopen = function (event) {
         chatSocket.send(JSON.stringify({
-            'message': uid
+            'message': uid,
+            'writer': 'order'
         }));
     };
     }

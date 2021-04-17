@@ -10,7 +10,7 @@
     <input id="chat-message-submit" type="button" value="Send">
     {{ room_name|json_script:"room-name" }}
     <script>
-        const roomName = JSON.parse(document.getElementById('room-name').textContent);
+        const roomName = (JSON.parse(document.getElementById('room-name').textContent));
 
         const chatSocket = new WebSocket(
             'ws://'
@@ -21,8 +21,42 @@
 
         chatSocket.onmessage = function(e) {
             const data = JSON.parse(e.data);
-            document.querySelector('#chat-log').value += (data.message + '\n');
+            if (data.message){
+                if (data.writer == roomName){
+                    document.querySelector('#chat-log').value += (data.writer + ' : ' +data.message + '\n');
+                }else{
+                    calculate()
+                    document.querySelector('#chat-log').value += (data.writer + ' : ' +data.message + '\n');
+                }
+            }
         };
+        window.onload = function () {
+            if (window.Notification) {
+                Notification.requestPermission();
+            }
+        }
+
+        function calculate() {
+            setTimeout(function () {
+                notify();
+            }, 1000);
+        }
+
+        function notify() {
+            if (Notification.permission !== 'granted') {
+                alert('notification is disabled');
+            }
+            else {
+                var notification = new Notification('주문이 도착했습니다', {
+                    icon: 'http://cdn.sstatic.net/stackexchange/img/logos/so/so-icon.png',
+                    body: '어서 주문을 확인해보세요!',
+                });
+
+                notification.onclick = function () {
+                    window.open('http://127.0.0.1:8001/order-check');
+                };
+            }
+        }
 
         chatSocket.onclose = function(e) {
             console.error('Chat socket closed unexpectedly');
@@ -39,7 +73,8 @@
             const messageInputDom = document.querySelector('#chat-message-input');
             const message = messageInputDom.value;
             chatSocket.send(JSON.stringify({
-                'message': message
+                'message': message,
+                'writer': roomName,
             }));
             messageInputDom.value = '';
         };

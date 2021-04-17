@@ -16,7 +16,6 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
@@ -26,7 +25,31 @@ SECRET_KEY = 'snv7ln)g-nqy#yi8xi^wkxn6$*oao_s)6yen94*y2fvx8#8#-0'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
+
+ASGI_APPLICATION = "calApp.asgi.application"
+
+CHANNEL_LAYERS = {
+    'default': {
+        # Method 1: Via redis lab
+        # 'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        # 'CONFIG': {
+        #     "hosts": [
+        #       'redis://h:<password>;@<redis Endpoint>:<port>'
+        #     ],
+        # },
+
+        # Method 2: Via local Redis
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+
+        # Method 3: Via In-memory channel layer
+        # Using this method.
+        # "BACKEND": "channels.layers.InMemoryChannelLayer"
+    },
+}
 
 
 # Application definition
@@ -40,6 +63,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'calMain',
     'mathfilters',
+    'channels',
 ]
 
 MIDDLEWARE = [
