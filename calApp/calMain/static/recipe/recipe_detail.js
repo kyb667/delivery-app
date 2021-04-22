@@ -29,19 +29,27 @@ $('.addcart').click(function(){
     var recipename = $('#recipename').text()
     var fooddetail = $('#fooddetail').text()
     var price = $('#price').text()
+    // add modal_cart_body
     insert_cart(recipeid,fooddetail,recipename, price)
     show_modal()
 })
+function show_modal(){
+    console.log('show_modal')
+    var cart = localStorage.getItem("cart")
+    console.log(cart)
+    insert_modal_cart_body_obj(cart)
+    $('#myModal').show()
+}
 // add cart
 function insert_cart(recipeid,fooddetail,recipename, price){
-    if ($('#cart_body_'+recipeid).length > 0){
+    console.log('insert_cart')
+    //이미 상품이 담겨있을경우 개수 증가
+    if ($('.cart_body_'+recipeid).length > 0){
         add_product(recipeid,fooddetail,recipename, price)
     }else{
-        html = ''
-        var cart_body = document.querySelector('#cart_body')
-        html = addTable(html,recipeid,fooddetail,recipename, price)
-        cart_body.innerHTML += html;
+        // 새로운 상품을 담을 경우 상품 담기
         var cart = JSON.parse(localStorage.getItem("cart"))
+        // 로컬스토리지가 있을 경우
         if (cart.length > 0){
             cart[0][recipeid] = {
                 "recipename": recipename,
@@ -51,6 +59,7 @@ function insert_cart(recipeid,fooddetail,recipename, price){
                 "money": price
             }
             localStorage.setItem("cart", JSON.stringify(cart))
+        // 로컬스토리지가 없을 경우
         }else{
             var obj = {}
             obj[recipeid] = {
@@ -70,30 +79,24 @@ function insert_cart(recipeid,fooddetail,recipename, price){
 }
 // 장바구니에 상품 담기
 function add_product(recipeid,fooddetail,recipename, price){
+    console.log('add_product')
     var cart = JSON.parse(localStorage.getItem("cart"))
     console.log(cart)
+    //로컬스토리지가 있을 경우
     if (cart.length > 0){
         cart = cart[0]
         val = parseInt($('.cnt_'+recipeid).text()) + 1
-        $('.money_' + recipeid).empty()
         var price = $('.price_' + recipeid).text()
         price = price.split(' ')
         var money = price[0] * val
         var won = price[1]
-        $('.cnt_'+recipeid).empty()
-        $('.cnt_'+recipeid).text(val)
-        $('.money_' + recipeid).empty()
-        $('.money_' + recipeid).text(money +' ' + won)
         cart[recipeid]['cnt'] = val
         cart[recipeid]['money'] = money +' ' + won
-        console.log(cart)
         localStorage.setItem("cart", JSON.stringify([cart]))
         $('#cart_all_cnt').text(parseInt($('#cart_all_cnt').text()) + 1 )
     }else{
-        var cart_body = document.querySelector('#cart_body')
-        html = addTable('',recipeid,fooddetail,recipename, price)
+        //로컬스토리지가 없을 경우
         $('#cart_all_cnt').text(1)
-        cart_body.innerHTML += html;
     }
     
 }

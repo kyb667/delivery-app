@@ -1,24 +1,6 @@
 $(document).ready(function(){
-    $('#order_cart_body').empty()
-    var order_cart_body = document.querySelector('#order_cart_body')
-    if (localStorage.getItem("cart") == null){
-        html = "<tr style='background-color: white;'><td colspan='7' style='background-color: white;'>&nbsp</td></tr><tr style='text-align:center background-color: white;'><td colspan='7' style='background-color: white; text-align:center'>카트에 담긴 상품이 없습니다</td></tr><tr style='background-color: white;'><td colspan='7' style='background-color: white;'>&nbsp</td></tr>"
-        order_cart_body.innerHTML += html;
-    }else if(JSON.parse(localStorage.getItem("cart")).length == 0){
-        html = "<tr style='background-color: white; text-align:center'><td colspan='7' style='background-color: white; text-align:center'>&nbsp</td></tr><tr style='text-align:center background-color: white;'><td colspan='7' style='background-color: white; text-align:center'>카트에 담긴 상품이 없습니다</td></tr><tr style='background-color: white;'><td colspan='7' style='background-color: white;'>&nbsp</td></tr>"
-        order_cart_body.innerHTML += html;
-    } else{
-        html = ''
-        var order_cart_body = document.querySelector('#order_cart_body')
-        var cartList = JSON.parse(localStorage.getItem("cart"))
-        cntAll = 0
-        for (var recipeid in cartList[0]){
-            val = cartList[0][recipeid]
-            cntAll += val['cnt']
-            html += addTable(html, recipeid, val['fooddetail'], val['recipename'], val['price'],val['cnt'])
-        }
-        order_cart_body.innerHTML += html;
-    }
+    var cart = localStorage.getItem("cart")
+    insert_in_cart_body_obj(cart)
 })
 //##################request post set cookie##########################
 function getCookie(name) {

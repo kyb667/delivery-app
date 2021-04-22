@@ -1,3 +1,8 @@
+$(document).ready(function(){
+    var cart = localStorage.getItem("cart")
+    insert_order_cart_body_obj(cart)
+})
+
 $(document).on('click', '#order_by_user', function(){
     $('#order_form').empty()
     $('.order_version_btn').empty()
