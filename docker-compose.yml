@@ -1,71 +1,52 @@
-version: "2.1"
-   
+version: "3.7"
+
 services:
-  postgres:
-    image: postgres:9.6.1
-    network_mode: host
-    restart: always
+  redis:
+    image: "redis:latest"
+    ports:
+      - "6379:6379"
+
+  dbapp:
+    build: ./postgres
     volumes:
-      - ./docker/data:/var/lib/postgresql/data
-    # volumes:
-    #   - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-    # ports:
-    #   - 5432:5432
-    environment:
-      - POSTGRES_DB=calorie
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_INITDB_ARGS=--encoding=UTF-8
-      # - POSTGRES_HOST_AUTH_METHOD=trust
-    # healthcheck:
-    #   test: "pg_isready -h postgres -p 5432 -q -U postgres"
-    #   interval: 3s
-    #   timeout: 1s
-    #   retries: 10
+      - dbdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      interval: 3s
+      timeout: 1s
+      retries: 10
 
   buyerapp:
     build: ./buyer
-    restart: always
-    environment:
-      - DJANGO_DEBUG=True
-      - DJANGO_DB_HOST=postgres
-      - DJANGO_DB_PORT=5432
-      - DJANGO_DB_NAME=calorie
-      - DJANGO_DB_USERNAME=postgres
-      - DJANGO_DB_PASSWORD=password
-    command: python manage.py runserver 0.0.0.0:8080
-    # links:
-    #   - postgres
     volumes:
       - .:/buyerapp
     ports:
-      - "8080:8080"
-    extra_hosts:
-      - "host.docker.internal:172.17.0.1"
+      - "8001:8000"
+    env_file:
+      - .env
     depends_on:
-      # 서비스가 하나 이상일 때 실행의존성 지정
-      # DB서비스가 실행된 후 DJANGO 서비스를 실행하겠다는 의미
-      - postgres
-        # condition
-        # : service_healthy
-  # sellerapp:
-  #   build: "./seller"
-  #   environment:
-  #     # - DJANGO_DEBUG=True
-  #     - DJANGO_DB_HOST=postgres
-  #     # - DJANGO_DB_PORT=5432
-  #     - DJANGO_DB_NAME=calorie
-  #     - DJANGO_DB_USERNAME=postgres
-  #     - DJANGO_DB_PASSWORD=password
-  #   command: python manage.py runserver 0.0.0.0:8000
-  #   links:
-  #     - postgres
-  #   volumes:
-  #     - .:/sellerapp
+      - dbapp
+      - redis
+
+  sellerapp:
+    build: "./seller"
+    volumes:
+      - .:/sellerapp
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - dbapp
+
+  # sellervue:
+  #   build: "./sellervue"
+  #   command: >
+  #     npm run serve
   #   ports:
-  #     - "8000:8000"
-  #   depends_on:
-  #     # 서비스가 하나 이상일 때 실행의존성 지정
-  #     # DB서비스가 실행된 후 DJANGO 서비스를 실행하겠다는 의미
-  #     postgres:
-  #       condition: service_healthy
+  #     - "8080:8080"
+
+volumes:
+  dbdata:
+    # external: true
