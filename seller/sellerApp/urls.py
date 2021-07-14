@@ -28,4 +28,5 @@ urlpatterns = [
     path('deleteRecipe', views.deleteRecipe, name='deleteRecipe'),
     path('updateRecipe', views.updateRecipe, name='updateRecipe'),
     path('getOrderInfoDetail', views.getOrderInfoDetail, name='getOrderInfoDetail'),
+    path('send', views.send, name='send'),
 ]

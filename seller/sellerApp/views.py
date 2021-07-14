@@ -6,7 +6,7 @@ from collections import defaultdict
 import copy
 from datetime import datetime
 from django.views.decorators.csrf import csrf_exempt
-from sellerApp import common
+from sellerApp import common, consumers
 
 logger = common.getLogger()
 
@@ -28,9 +28,9 @@ def login(request):
             pw = obj[0][0]
             msg = True if bcrypt.checkpw(data['pw'].encode(), pw.encode()) else False
     except Exception as e:
-        print(e)
+        logger.error(e)
     finally:
-        logger.info("return " + str({'flag':msg}))
+        logger.debug("return " + str({'flag':msg}))
         logger.info("login end")
         return JsonResponse({'flag':msg})
 
@@ -51,9 +51,9 @@ def signin(request):
             con.commit()
         msg = True
     except Exception as e:
-        print(e)
+        logger.error(e)
     finally:
-        logger.info("return " + str({'flag':msg}))
+        logger.debug("return " + str({'flag':msg}))
         logger.info("signin end")
         return JsonResponse({'flag':msg})
 
@@ -81,9 +81,9 @@ def getRecipe(request):
             df.loc[df.takeout_flag==True,'takeout_flag']='가능'
             recipeInfo = df.to_dict('records')
     except Exception as e:
-        print(e)
+        logger.error(e)
     finally:
-        logger.info("return " + str({'recipeInfo':recipeInfo}))
+        logger.debug("return " + str({'recipeInfo':recipeInfo}))
         logger.info("getRecipe end")
         return JsonResponse({'recipeInfo':recipeInfo})
 
@@ -101,9 +101,9 @@ def getFood(request):
             f = cursor.fetchall()
             foodList = [dict(i) for i in f]
     except Exception as e:
-        print(e)
+        logger.error(e)
     finally:
-        logger.info("return " + str({'foodList':foodList}))
+        logger.debug("return " + str({'foodList':foodList}))
         logger.info("getFood end")
         return JsonResponse({'foodList':foodList})
 
@@ -126,9 +126,9 @@ def insertRecipe(request):
             con.commit()
         msg = True
     except Exception as e:
-        print(e)
+        logger.error(e)
     finally:
-        logger.info("return " + str({'flag':msg}))
+        logger.debug("return " + str({'flag':msg}))
         logger.info("insertRecipe end")
         return JsonResponse({'flag':msg})
 
@@ -149,15 +149,15 @@ def updateRecipe(request):
         with con.cursor() as cursor:
             cursor.execute("""
             update recipe
-            set price = {1},  delivary_flag = {2}, takeout_flag = {3}, modify = modify + 1
+            set price = '{1}',  delivary_flag = {2}, takeout_flag = {3}, modify = modify + 1
             where recipeid = {0}
             """.format(recipe_id, price, delivary_flag, takeout_flag))
             con.commit()
         msg = True
     except Exception as e:
-        print(e)
+        logger.error(e)
     finally:
-        logger.info("return " + str({'flag':msg}))
+        logger.debug("return " + str({'flag':msg}))
         logger.info("updateRecipe end")
         return JsonResponse({'flag':msg})
 
@@ -187,9 +187,9 @@ def getRecipeDetail(request):
             if f:
                 recipeInfo = [dict(i) for i in f]
     except Exception as e:
-        print(e)
+        logger.error(e)
     finally:
-        logger.info("return " + str({'recipeInfo':recipeInfo}))
+        logger.debug("return " + str({'recipeInfo':recipeInfo}))
         logger.info("getRecipeDetail end")
         return JsonResponse({'recipeInfo':recipeInfo})
 
@@ -212,9 +212,9 @@ def insertRecipeDetail(request):
             con.commit()
             msg = True
     except Exception as e:
-        print(e)
+        logger.error(e)
     finally:
-        logger.info("return " + str({'flag':msg}))
+        logger.debug("return " + str({'flag':msg}))
         logger.info("getRecipeDetail end")
         return JsonResponse({'flag':msg})
 
@@ -248,9 +248,9 @@ def getOrderInfo(request):
                 info[ordertime.strftime('%Y-%m-%d')] = [finish, state]
             orderInfo = info
     except Exception as e:
-        print(e)
+        logger.error(e)
     finally:
-        logger.info("return " + str({'orderInfo':orderInfo}))
+        logger.debug("return " + str({'orderInfo':orderInfo}))
         logger.info("getOrderInfo end")
         return JsonResponse({'orderInfo':orderInfo})
 
@@ -272,9 +272,9 @@ def deleteRecipe(request):
             con.commit()
         msg = True
     except Exception as e:
-        print(e)
+        logger.error(e)
     finally:
-        logger.info("return " + str({'flag':msg}))
+        logger.debug("return " + str({'flag':msg}))
         logger.info("deleteRecipe end")
         return JsonResponse({'flag':msg})
 
@@ -309,8 +309,22 @@ def getOrderInfoDetail(request):
                     info[i['id_uid']] = [i]
             getOrderInfoDetail = info
     except Exception as e:
-        print(e)
+        logger.error(e)
     finally:
-        logger.info("return " + str({'getOrderInfoDetail':getOrderInfoDetail}))
+        logger.debug("return " + str({'getOrderInfoDetail':getOrderInfoDetail}))
         logger.info("getOrderInfoDetail end")
         return JsonResponse({'getOrderInfoDetail':getOrderInfoDetail})
+
+@csrf_exempt
+def send(request):
+    logger.info("send start")
+    try:
+        code = {'code': 500}
+        data = json.loads(request.body)
+        code = consumers.send_message(data)
+    except Exception as e:
+        code = {'code': 500}
+        logger.error(e)
+    finally:
+        logger.info("send end")
+        return JsonResponse({'send':code})

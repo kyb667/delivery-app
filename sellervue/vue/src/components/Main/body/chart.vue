@@ -1,30 +1,92 @@
 <template>
   <div>
     <div>
-      <div>
-        <v-sheet tile height="54" class="d-flex">
-          <v-btn icon class="ma-2" @click="$refs.calendar.prev()">
-            <v-icon>mdi-chevron-left</v-icon>
-          </v-btn>
-          <v-spacer></v-spacer>
-          <v-btn icon class="ma-2" @click="$refs.calendar.next()">
-            <v-icon>mdi-chevron-right</v-icon>
-          </v-btn>
-        </v-sheet>
-        <v-sheet height="600">
-          <v-calendar
-            ref="calendar"
-            v-model="value"
-            weekdays="[0, 1, 2, 3, 4, 5, 6]"
-            type="month"
-            :events="events"
-            event-overlap-mode="stack"
-            :event-overlap-threshold="30"
-            :event-color="getEventColor"
-            @click:event="getEvents1"
-          ></v-calendar>
-        </v-sheet>
-      </div>
+      <v-row>
+        <!-- time setting start -->
+        <v-col cols="12" sm="6" md="4">
+          <v-menu
+            ref="menu"
+            v-model="menu"
+            :close-on-content-click="false"
+            :return-value.sync="checkDate"
+            transition="scale-transition"
+            offset-y
+            min-width="auto"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+                v-model="date"
+                label="Picker in menu"
+                prepend-icon="mdi-calendar"
+                readonly
+                v-bind="attrs"
+                v-on="on"
+              ></v-text-field>
+            </template>
+            <v-date-picker v-model="date" no-title scrollable>
+              <v-spacer></v-spacer>
+              <v-btn text color="primary" @click="menu = false">
+                Cancel
+              </v-btn>
+              <v-btn text color="primary" @click="$refs.menu.save(date)">
+                OK
+              </v-btn>
+            </v-date-picker>
+          </v-menu>
+        </v-col>
+        <!-- time setting end -->
+        <!-- showmenu setting start -->
+        <v-col>
+          <v-tabs v-model="tab">
+            <v-tab v-for="item in items" :key="item.tab">
+              {{ item.tab }}
+            </v-tab>
+          </v-tabs>
+        </v-col>
+        <!-- showmenu setting end -->
+      </v-row>
+    </div>
+    <div>
+      <v-tabs-items v-model="tab">
+        <v-tab-item v-for="item in items" :key="item.tab">
+          <v-card flat v-if="item.tab === 'table'">
+            <v-row align="center" justify="center">
+              <v-col cols="14" sm="8" md="8">
+                <v-sheet height="600">
+                  <v-calendar
+                    ref="calendar"
+                    v-model="table"
+                    weekdays="[0, 1, 2, 3, 4, 5, 6]"
+                    type="month"
+                    :events="events"
+                    event-overlap-mode="stack"
+                    :event-overlap-threshold="30"
+                    @click:event="getDialogInfo"
+                  ></v-calendar>
+                </v-sheet>
+              </v-col>
+            </v-row>
+          </v-card>
+          <v-card flat v-if="item.tab === 'chart'">
+            <v-card-text>
+              <v-row>
+                <v-col cols="12" sm="6" md="4">
+                  <v-radio-group v-model="row" row>
+                    <v-radio label="월별" value="radio-1"></v-radio>
+                    <v-radio label="주별" value="radio-2"></v-radio>
+                    <v-radio label="일별" value="radio-3"></v-radio>
+                  </v-radio-group>
+                </v-col>
+              </v-row>
+            </v-card-text>
+            <v-row align="center" justify="center">
+              <v-col cols="14" sm="8" md="8">
+                <div class="chart"></div>
+              </v-col>
+            </v-row>
+          </v-card>
+        </v-tab-item>
+      </v-tabs-items>
     </div>
     <div>
       <v-dialog
@@ -80,9 +142,6 @@
         </v-card>
       </v-dialog>
     </div>
-    <div>
-      <div class="chart"></div>
-    </div>
   </div>
 </template>
 <script>
@@ -92,10 +151,23 @@ import "c3/c3.min.css";
 
 export default {
   data: () => ({
-    picker: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+    // time setting
+    menu: false,
+    date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
       .toISOString()
       .substr(0, 10),
-    value: "",
+    checkDate: null,
+
+    // showmenu setting
+    tab: null,
+    items: [
+      { tab: "table", content: "Tab 1 Content" },
+      { tab: "chart", content: "Tab 2 Content" },
+    ],
+    row: null,
+
+    // table setting
+    table: "",
     events: [],
     colors: { state: "blue", finish: "green" },
     names: {
@@ -104,14 +176,7 @@ export default {
       cancelled: "취소",
       reserve: "예약",
     },
-
-    dialog: false,
-    dialog_date: null,
-    dialog_msg: null,
-
     orderInfoList: [],
-
-    // table
     orderInfoHeaders: [
       { text: "id_uid", align: "start", value: "id_uid" },
       { text: "order_email", align: "start", value: "order_email" },
@@ -132,70 +197,66 @@ export default {
       { text: "price", value: "price", sortable: false },
     ],
 
+    // dialog setting
+    dialog: false,
+    dialog_date: null,
+    dialog_msg: null,
     dialog_Info: [],
     dialog_Info_datatable: [],
-
-    search: "",
-    calories: "",
-
     headers: [
       { text: "id_uid", value: "id_uid" },
       { text: "cnt", value: "cnt" },
       { text: "Actions", value: "actions", sortable: false },
     ],
 
+    // chart setting
     chart_x_header: ["x"],
+    chart_y_sales: ["sales"],
+    chart_y_cnt: ["cnt"],
   }),
   mounted() {
     this.drowChart();
   },
   created() {
-    this.getOrderInfo();
+    var d = this.timeSet(this.date);
+    this.getOrderInfo(d[0], d[1]);
   },
   methods: {
+    // date start ~ end setting
+    timeSet(t) {
+      var now = t.split("-");
+      var lastDate = new Date(parseInt(now[0]), parseInt(now[1]), 0);
+      for (var i = 1; i <= parseInt(lastDate.getDate()); i++) {
+        this.chart_x_header.push(i);
+      }
+      var startDate = now[0] + "-" + now[1] + "-" + String(1);
+      lastDate = now[0] + "-" + now[1] + "-" + String(lastDate.getDate());
+      return [startDate, lastDate];
+    },
+    // drow chart
     drowChart() {
       c3.generate({
         bindto: ".chart",
         data: {
           x: "x",
-          columns: [
-            this.chart_x_header,
-            ["data1", 30, 200, 100, 400, 150, 250],
-            ["data2", 130, 300, 200, 300, 250, 450],
-          ],
+          columns: [this.chart_x_header, this.chart_y_sales, this.chart_y_cnt],
         },
         axis: {
           x: {
             type: "timeseries",
             tick: {
-              format: "%d",
+              format: "%Y-%m-%d",
             },
           },
         },
       });
     },
-    getOrderInfo() {
-      var now = new Date();
-      var lastDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-      for (var i = 1; i <= parseInt(lastDate.getDate()); i++) {
-        this.chart_x_header.push(i);
-      }
-      now =
-        String(now.getFullYear()) +
-        "-" +
-        String(now.getMonth() + 1) +
-        "-" +
-        String(1);
-      lastDate =
-        String(lastDate.getFullYear()) +
-        "-" +
-        String(lastDate.getMonth() + 1) +
-        "-" +
-        String(lastDate.getDate());
+    // set orderInfoList
+    getOrderInfo(startDate, lastDate) {
       axios
         .post("/db/getOrderInfo", {
           id: this.$store.getters.getLoginId,
-          start: now,
+          start: startDate,
           last: lastDate,
         })
         .then((res) => {
@@ -206,7 +267,8 @@ export default {
           alert("다시 시도해주세요");
         });
     },
-    getEvents1({ nativeEvent, event }) {
+    // set dialog_Info
+    getDialogInfo({ nativeEvent, event }) {
       console.log(nativeEvent);
       console.log(event.start);
       axios
@@ -264,6 +326,12 @@ export default {
       }
       console.log(events);
       this.events = events;
+    },
+    checkDate() {
+      var now = this.date;
+      var d = this.timeSet(now);
+      this.drowChart();
+      this.getOrderInfo(d[0], d[1]);
     },
   },
 };

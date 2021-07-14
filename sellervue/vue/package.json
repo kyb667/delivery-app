@@ -12,6 +12,8 @@
     "c3": "^0.7.20",
     "core-js": "^3.6.5",
     "d3": "^6.7.0",
+    "firebase": "^8.7.1",
+    "firebase-admin": "^9.10.0",
     "vue": "^2.6.11",
     "vue-c3": "^1.2.11",
     "vue-cookies": "^1.7.4",
@@ -47,7 +49,9 @@
     "parserOptions": {
       "parser": "babel-eslint"
     },
-    "rules": {}
+    "rules": {
+      "no-unused-vars": "off"
+    }
   },
   "browserslist": [
     "> 1%",
