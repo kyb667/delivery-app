@@ -50,8 +50,8 @@ router.beforeEach(function(to, from, next) {
       return routerInfo.meta.authRequired;
     })
   ) {
-    if (store.getters.getLogin_uid) {
-      store.dispatch("sc_conn", store.getters.getLogin_uid);
+    if (store.getters.getLoginId && store.getters.getLogin_uid) {
+      store.dispatch("sc_conn", store.getters.getLoginId);
       next();
     } else {
       alert("fail");

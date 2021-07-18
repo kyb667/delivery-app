@@ -61,9 +61,7 @@ export default {
     tab: null,
   }),
   created: function() {
-    console.log(123);
     this.open();
-    console.log(store.getters.getLogin_uid);
   },
   components: {
     AddRecipe: AddRecipe,

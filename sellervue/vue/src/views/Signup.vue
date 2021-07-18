@@ -97,8 +97,9 @@
 </template>
 
 <script>
+import firebase from "firebase/app";
 import router from "../router";
-import { firebase, db, auth } from "../../firebaseInit";
+import { fb, db, auth, realTimeDb } from "../../firebaseInit";
 
 export default {
   data: () => ({
@@ -123,43 +124,38 @@ export default {
           name: this.name,
           email: this.email,
           postcode: this.postcode,
-          roadAddress: this.roadAddress,
-          jibunAddress: this.jibunAddress,
-          detailAddress: this.detailAddress,
+          roadaddress: this.roadAddress,
+          jibunaddress: this.jibunAddress,
+          detailaddress: this.detailAddress,
         };
+        var t = this;
         firebase
           .auth()
           .createUserWithEmailAndPassword(this.email, this.pw)
           .then(() => {
             let user = firebase.auth().currentUser;
-            // mail 送る
             user
               .sendEmailVerification()
               .then(function() {
                 data.email = user.email;
-                db.collection("sellerId")
-                  .doc(data.id)
-                  .set(data);
+                realTimeDb.ref("seller/" + t.id + "/info").set(data);
+                // db.collection("sellerId")
+                //   .doc(user.uid)
+                //   .set(data);
                 router.push("/");
               })
               .catch((error) => {
                 console.log(error);
                 alert("email 送信失敗", error.message);
               });
+          })
+          .catch((error) => {
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            console.log(errorCode);
+            console.log(errorMessage);
+            alert(error.message);
           });
-        // axios
-        //   .post("/db/signin", data)
-        //   .then(function(res) {
-        //     if (res["data"]["flag"]) {
-        //       router.push("/");
-        //       alert("회원가입 성공!");
-        //     } else {
-        //       alert("다시 입력해주세요");
-        //     }
-        //   })
-        //   .catch(function() {
-        //     alert("다시 시도해주세요");
-        //   });
       }
     },
     showApi: function() {

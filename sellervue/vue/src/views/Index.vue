@@ -4,8 +4,8 @@
       <v-col cols="12" sm="4">
         <v-form ref="form">
           <v-text-field
-            v-model="email"
-            label="email"
+            v-model="id"
+            label="id"
             :rules="idRules"
             required
           ></v-text-field>
@@ -30,12 +30,12 @@
 
 <script>
 import router from "../router";
-import { firebase, db, auth } from "../../firebaseInit";
+import { firebase, db, auth, realTimeDb } from "../../firebaseInit";
 import { mapMutations } from "vuex";
 
 export default {
   data: () => ({
-    email: "",
+    id: "",
     pw: "",
     idRules: [
       (v) => !!v || "id is required",
@@ -48,62 +48,90 @@ export default {
     submit: function() {
       if (this.$refs.form.validate()) {
         var t = this;
-        // let data = {
-        //   id: this.id,
-        //   pw: this.pw,
-        // };
-        var email = this.email;
+        var id = this.id;
         var pw = this.pw;
-        console.log(email);
-        console.log(pw);
         firebase
           .auth()
-          .signInWithEmailAndPassword(email, pw)
-          .then((user) => {
-            console.log(user);
-            console.log(user.user);
-            console.log(firebase.auth().currentUser);
-            if (user.user.emailVerified) {
-              t.$store.commit("setLogin_uid", user.user.uid);
-              //   t.$store.commit("setloginId", email);
-              console.log("email success");
-              router.push("main");
-            } else {
-              this.id = "";
-              this.pw = "";
-              const user = firebase.auth().currentUser;
-              if (user) {
-                firebase
-                  .auth()
-                  .signOut()
-                  .then(() => {
-                    // Sign-out successful.
-                  })
-                  .catch((error) => {
-                    // An error happened.
-                  });
-              }
-              alert("email 認証が必要です。");
-            }
+          .setPersistence(firebase.auth.Auth.Persistence.SESSION)
+          .then(() => {
+            realTimeDb
+              .ref()
+              .child("seller")
+              .child(id)
+              .get()
+              .then((snapshot) => {
+                if (snapshot.exists()) {
+                  firebase
+                    .auth()
+                    .signInWithEmailAndPassword(snapshot.val().info.email, pw)
+                    .then((user) => {
+                      console.log(firebase.auth().currentUser);
+                      if (user.user.emailVerified) {
+                        t.$store.commit("setLogin_uid", user.user.uid);
+                        t.$store.commit("setloginId", snapshot.val().info.id);
+                        router.push("main");
+                        // db.collection("sellerId")
+                        //   .doc(user.user.uid)
+                        //   .get()
+                        //   .then((doc) => {
+                        //     if (doc.exists) {
+                        //       t.$store.commit("setLogin_uid", user.user.uid);
+                        //       t.$store.commit("setloginId", doc.data().id);
+                        //       router.push("main");
+                        //     } else {
+                        //       // TODO
+                        //       console.log("No such document!");
+                        //     }
+                        //   })
+                        //   .catch((error) => {
+                        //     console.log("Error getting document:", error);
+                        //   });
+                      } else {
+                        this.id = "";
+                        this.pw = "";
+                        const user = firebase.auth().currentUser;
+                        if (user) {
+                          firebase
+                            .auth()
+                            .signOut()
+                            .then(() => {})
+                            .catch((error) => {
+                              var errorCode = error.code;
+                              var errorMessage = error.message;
+                              console.log(errorCode);
+                              console.log(errorMessage);
+                            });
+                        }
+                        alert("email 認証が必要です。");
+                      }
+                    })
+                    .catch((error) => {
+                      this.email = "";
+                      this.pw = "";
+                      var errorCode = error.code;
+                      var errorMessage = error.message;
+                      console.log(errorCode);
+                      console.log(errorMessage);
+                      alert("会員登録がない。");
+                    });
+                } else {
+                  console.log("No data available");
+                }
+              })
+              .catch((error) => {
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                console.log(errorCode);
+                console.log(errorMessage);
+              });
           })
-          .catch((err) => {
-            this.email = "";
-            this.pw = "";
-            console.log(err);
-            alert("会員登録がない。");
+          .catch((error) => {
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            console.log(errorCode);
+            console.log(errorMessage);
+            router.push("/");
           });
-        // axios.post('db/login', data)
-        // .then(function (res){
-        //     if(res['data']['flag']){
-        //         t.$store.commit('setloginId',t.id);
-        //         router.push('main')
-        //     }else{
-        //         alert('id 또는 pw가 틀렸습니다.')
-        //     }
-        // })
-        // .catch(function(){
-        //     alert('다시 시도해주세요')
-        // })
       }
     },
   },

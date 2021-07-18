@@ -293,6 +293,7 @@
 
 <script>
 import axios from "axios";
+import { firebase, db, auth, realTimeDb } from "../../../../firebaseInit";
 
 export default {
   data: () => ({
@@ -380,7 +381,7 @@ export default {
       },
     ],
 
-    deleteRecipeId: null,
+    deleteRecipeName: null,
 
     recipeDetailUpsertDialog: false,
 
@@ -425,7 +426,7 @@ export default {
         console.log(i);
       }
     },
-
+    // TODO image
     selectFile(file) {
       console.log(file);
       this.file = file;
@@ -434,15 +435,43 @@ export default {
     // get recipe
     // ok
     getRecipe() {
-      let data = { id: this.$store.getters.getLoginId };
-      axios
-        .post("/db/getRecipe", data)
-        .then((res) => {
-          this.recipeInfo = res["data"]["recipeInfo"];
-        })
-        .catch(function() {
-          alert("다시 시도해주세요");
+      const pushList = [];
+      const user = firebase.auth().currentUser;
+      console.log(user);
+      // realTimeDb.
+      // db.collection("recipe")
+      //   .where("seller_id", "==", this.$store.getters.getLoginId)
+      //   .get()
+      //   .then((querySnapshot) => {
+      //     querySnapshot.forEach((doc) => {
+      //       console.log(doc.data());
+      //       var d = doc.data();
+      //       if (d.takeout_flag == true) {
+      //         d.takeout_flag = "가능";
+      //       } else {
+      //         d.takeout_flag = "불가능";
+      //       }
+      //       if (d.delivary_flag == true) {
+      //         d.delivary_flag = "가능";
+      //       } else {
+      //         d.delivary_flag = "불가능";
+      //       }
+      //       pushList.push(d);
+      //     });
+      //     this.recipeInfo = pushList;
+      //   })
+      //   .catch((error) => {
+          console.log("Error getting documents: ", error);
         });
+      // let data = { id: this.$store.getters.getLoginId };
+      // axios
+      //   .post("/db/getRecipe", data)
+      //   .then((res) => {
+      //     this.recipeInfo = res["data"]["recipeInfo"];
+      //   })
+      //   .catch(function() {
+      //     alert("다시 시도해주세요");
+      //   });
     },
 
     // get food
@@ -462,32 +491,51 @@ export default {
     // dataTableからdeleteボタンを押す
     // ok
     deleteItem(item) {
-      this.deleteRecipeId = item.recipeid;
+      console.log("deleteItem");
+      console.log(item);
+      this.deleteRecipeName = item.recipename;
       this.dialogDelete = true;
     },
     // recipe delete 確認ボタン
     // ok
     deleteItemConfirm() {
+      console.log("deleteItemConfirm");
       console.log(this.editedIndex);
-      if (this.deleteRecipeId) {
-        axios
-          .post("/db/deleteRecipe", { recipeid: this.deleteRecipeId })
-          .then((res) => {
-            if (res["data"]["flag"]) {
-              this.recipeInfo.splice(this.editedIndex, 1);
-              this.recipedetailList = [];
-            } else {
-              alert("다시 시도해주세요");
-            }
+      if (this.deleteRecipeName) {
+        db.collection("recipe")
+          .doc(this.deleteRecipeName)
+          .delete()
+          .then(() => {
+            this.recipeInfo.splice(this.editedIndex, 1);
+            this.recipedetailList = [];
           })
-          .catch(function() {
-            alert("다시 시도해주세요");
+          .catch((error) => {
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            console.log(errorCode);
+            console.log(errorMessage);
+            alert(error.message);
           });
-        this.deleteRecipeId = null;
+        //   axios
+        //     .post("/db/deleteRecipe", { recipeid: this.deleteRecipeName })
+        //     .then((res) => {
+        //       if (res["data"]["flag"]) {
+        //         this.recipeInfo.splice(this.editedIndex, 1);
+        //         this.recipedetailList = [];
+        //       } else {
+        //         alert("다시 시도해주세요");
+        //       }
+        //     })
+        //     .catch(function() {
+        //       alert("다시 시도해주세요");
+        //     });
+        //   this.deleteRecipeName = null;
+        // }
+        this.close("delete");
       }
-      this.close("delete");
     },
 
+    // TODO image
     onImageUploaded(e) {
       console.log(e);
       var p = e.target.files[0];
