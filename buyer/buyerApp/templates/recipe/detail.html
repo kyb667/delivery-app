@@ -1,149 +1,190 @@
-{% extends "../base.html" %}
-{% load static %}
-{% load mathfilters %}
-{% block index %}
-    <ul>
-      <li><a href="{% url  'index' %}">Home</a></li>
-      <li><a href="{% url  'recipe' %}">recipe</a></li>
-      <li><a href="{% url  'select' %}" id="fooddetail">{{ fooddetail }}</a></li>
-      <li><a href="{% url 'showRecipeDetail' recipeinfo.recipename recipeinfo.recipeid %}" id="recipename">{{ recipeinfo.recipename }}</a></li>
-    </ul>
-{% endblock %}
+{% extends "../base.html" %} {% load static %} {% load mathfilters %} {% block
+index %}
+<ul>
+  <li><a href="{% url  'index' %}">Home</a></li>
+  <li><a href="{% url  'recipe' %}">recipe</a></li>
+  <li><a href="{% url  'select' %}" id="fooddetail">{{ fooddetail }}</a></li>
+  <li>
+    <a
+      href="{% url 'showRecipeDetail' recipeinfo.recipename recipeinfo.recipeid %}"
+      id="recipename"
+      >{{ recipeinfo.recipename }}</a
+    >
+  </li>
+</ul>
+{% endblock %} {% block foodgallery %}
+<h1>{{ recipeinfo.recipename }}</h1>
+<i class="fa fa-thumbs-up"></i
+><a id="likeit" name="likeit" data-id="{{ recipeinfo.recipeid }}"
+  >like it <span id="lovenum"> {{ recipeinfo.recipelove }} </span></a
+>
+&nbsp;&nbsp;&nbsp; <i class="fa fa-thumbs-down"></i>
+<a id="hateit" name="hateit" data-id="{{ recipeinfo.recipeid }}"
+  >hate it <span id="hatenum"> {{ recipeinfo.recipehate }} </span> </a
+>&nbsp;&nbsp;&nbsp; <i class="fa fa-shopping-basket"></i>
+<a class="addcart" name="{{ recipeinfo.recipeid }}"> 장바구니 담기 </a>
+<p id="price">{{ recipeinfo.price }} 원</p>
+<p>{{ recipeinfo.recipesummary }}</p>
+<h1>조리과정</h1>
+<div id="comments">
+  <ul>
+    {% for i in recipedetailinfo %}
+    <li>
+      <article>
+        <header>
+          {% if i.recipedetailimage != '' %}
+          <figure><img src="{{ i.recipedetailimage }}" alt="" /></figure>
+          {% endif %}
+          <address>
+            <a> Step{{ i.recipedetailnum }}</a>
+          </address>
+        </header>
+        <div class="comcont">
+          <p>{{ i.recipedetailtext }}</p>
+        </div>
+      </article>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+<br />
+<h1>들어가는 재료</h1>
+<div class="scrollable">
+  <table>
+    <thead>
+      <tr>
+        <th>Header 1</th>
+        <th>Header 2</th>
+        <th>Header 3</th>
+        <th>Header 4</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a href="#">Value 1</a></td>
+        <td>Value 2</td>
+        <td>Value 3</td>
+        <td>Value 4</td>
+      </tr>
+      <tr>
+        <td>Value 5</td>
+        <td>Value 6</td>
+        <td>Value 7</td>
+        <td><a href="#">Value 8</a></td>
+      </tr>
+      <tr>
+        <td>Value 9</td>
+        <td>Value 10</td>
+        <td>Value 11</td>
+        <td>Value 12</td>
+      </tr>
+      <tr>
+        <td>Value 13</td>
+        <td><a href="#">Value 14</a></td>
+        <td>Value 15</td>
+        <td>Value 16</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div id="comments">
+  {% if newCommentList %}
+  <h2>댓글창</h2>
+  {% endif %} {% if popularList %}
+  <h4>best</h4>
+  <ul id="">
+    {% for v in popularList %}
+    <li>
+      <article>
+        <header>
+          <figure class="avatar">
+            <a
+              class="up_comment_love"
+              id="up_comment_love_{{ v.id }}"
+              data-id="{{ v.id }}"
+            >
+              {{ v.commentlove }}
+            </a>
+          </figure>
+          <figure class="avatar">
+            <a
+              class="up_comment_hate"
+              id="up_comment_hate_{{ v.id }}"
+              data-id="{{ v.id }}"
+            >
+              {{ v.commenthate }}
+            </a>
+          </figure>
+          <address>By <a href="#"> {{ v.writer_id }} </a></address>
+          <span><time>{{ v.writingtime }}</time></span>
+        </header>
+        <div class="comcont">
+          <p>{{ v.comment }}</p>
+        </div>
+      </article>
+    </li>
+    {% endfor %}
+  </ul>
+  {% endif %} {% if newCommentList %}
+  <h4>new</h4>
+  <ul id="show_comments">
+    {% for v in newCommentList %}
+    <li>
+      <article>
+        <header>
+          <figure class="avatar">
+            <a
+              class="up_comment_love"
+              id="up_comment_love_{{ v.id }}"
+              data-id="{{ v.id }}"
+            >
+              {{ v.commentlove }}
+            </a>
+          </figure>
+          <figure class="avatar">
+            <a
+              class="up_comment_hate"
+              id="up_comment_hate_{{ v.id }}"
+              data-id="{{ v.id }}"
+            >
+              {{ v.commenthate }}
+            </a>
+          </figure>
+          <address>By <a href="#"> {{ v.writer_id }} </a></address>
+          <span><time>{{ v.writingtime }}</time></span>
+        </header>
+        <div class="comcont">
+          <p>{{ v.comment }}</p>
+          <p>{{ v.id }}</p>
+        </div>
+      </article>
+    </li>
+    {% endfor %}
+  </ul>
+  <!-- TODO 댓글 전체보기 -->
+  {% endif %} {% if request.COOKIES.session %}
+  <h2>Write A Comment</h2>
+  <form method="post">
+    {% csrf_token %}
+    <div class="block clear">
+      <label for="contents">contents <span>*</span></label>
+      <textarea name="contents" id="contents" cols="25" rows="2"></textarea>
+    </div>
+    <div>
+      <input
+        type="button"
+        name="comment_submit"
+        id="comment_submit"
+        value="Submit Form"
+        data-id="{{ foodid }}"
+        data-name="{{ request.session.name }}"
+      />
+    </div>
+  </form>
+</div>
+{% endif %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="{% static 'recipe/recipe_detail.js' %}"></script>
+<script src="https://code.jquery.com/jquery-latest.js"></script>
 
-{% block foodgallery %}
-      <h1>{{ recipeinfo.recipename }}</h1>
-      <i class="fa fa-thumbs-up"></i><a id="likeit" name="likeit" data-id="{{ recipeinfo.recipeid }}">like it <span id="lovenum"> {{ recipeinfo.recipelove }} </span></a> &nbsp;&nbsp;&nbsp;
-      <i class="fa fa-thumbs-down"></i> <a id="hateit" name="hateit" data-id="{{ recipeinfo.recipeid }}">hate it <span id="hatenum"> {{ recipeinfo.recipehate }} </span> </a>&nbsp;&nbsp;&nbsp;
-      <i class="fa fa-shopping-basket"></i> <a class="addcart" name="{{ recipeinfo.recipeid }}"> 장바구니 담기 </a>
-      <p id="price">{{ recipeinfo.price }} 원</p>
-      <p>{{ recipeinfo.recipesummary }}</p>
-      <h1>조리과정</h1>
-      <div id="comments">
-        <ul>
-          {% for i in recipedetailinfo %}
-          <li>
-            <article>
-              <header>
-                {% if i.recipedetailimage != ''  %}
-                <figure><img src="{{ i.recipedetailimage }}" alt=""></figure>
-                {% endif %}
-                <address>
-                  <a> Step{{ i.recipedetailnum }}</a>
-                </address>
-              </header>
-              <div class="comcont">
-                <p>{{ i.recipedetailtext }}</p>
-              </div>
-            </article>
-          </li>
-          {% endfor %}
-        </ul>
-      </div>
-      <br/>
-      <h1>들어가는 재료</h1>
-      <div class="scrollable">
-        <table>
-          <thead>
-            <tr>
-              <th>Header 1</th>
-              <th>Header 2</th>
-              <th>Header 3</th>
-              <th>Header 4</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><a href="#">Value 1</a></td>
-              <td>Value 2</td>
-              <td>Value 3</td>
-              <td>Value 4</td>
-            </tr>
-            <tr>
-              <td>Value 5</td>
-              <td>Value 6</td>
-              <td>Value 7</td>
-              <td><a href="#">Value 8</a></td>
-            </tr>
-            <tr>
-              <td>Value 9</td>
-              <td>Value 10</td>
-              <td>Value 11</td>
-              <td>Value 12</td>
-            </tr>
-            <tr>
-              <td>Value 13</td>
-              <td><a href="#">Value 14</a></td>
-              <td>Value 15</td>
-              <td>Value 16</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div id="comments">
-        {% if newCommentList %}
-        <h2>댓글창</h2>
-        {% endif %}
-        {% if popularList %}
-        <h4>best</h4>
-        <ul id="">
-          {% for v in popularList %}
-          <li>
-            <article>
-              <header>
-                <figure class="avatar"><a class="up_comment_love" id='up_comment_love_{{ v.id }}' data-id="{{ v.id }}" > {{ v.commentlove }} </a></figure>
-                <figure class="avatar"><a class="up_comment_hate" id='up_comment_hate_{{ v.id }}' data-id="{{ v.id }}" > {{ v.commenthate }} </a></figure>
-                <address> By <a href="#"> {{ v.writer_id }} </a>
-                </address>
-                <span><time>{{ v.writingtime }}</time></span>
-              </header>
-              <div class="comcont">
-                <p>{{ v.comment }}</p>
-              </div>
-            </article>
-          </li>
-          {% endfor %}
-        </ul>
-        {% endif %}
-        {% if newCommentList %}
-        <h4>new</h4>
-        <ul id="show_comments">
-          {% for v in newCommentList %}
-          <li>
-            <article>
-              <header>
-                <figure class="avatar"><a class="up_comment_love" id='up_comment_love_{{ v.id }}' data-id="{{ v.id }}" > {{ v.commentlove }} </a></figure>
-                <figure class="avatar"><a class="up_comment_hate" id='up_comment_hate_{{ v.id }}' data-id="{{ v.id }}" > {{ v.commenthate }} </a></figure>
-                <address> By <a href="#"> {{ v.writer_id }} </a>
-                </address>
-                <span><time>{{ v.writingtime }}</time></span>
-              </header>
-              <div class="comcont">
-                <p>{{ v.comment }}</p>
-                <p>{{ v.id }}</p>
-              </div>
-            </article>
-          </li>
-          {% endfor %}
-        </ul>
-        <!-- TODO 댓글 전체보기 -->
-        {% endif %}
-        {% if request.session.name %}
-        <h2>Write A Comment</h2>
-        <form method="post">
-          {% csrf_token %}
-          <div class="block clear">
-            <label for="contents">contents <span>*</span></label>
-            <textarea name="contents" id="contents" cols="25" rows="2"></textarea>
-          </div>
-          <div>
-            <input type="button" name="comment_submit" id="comment_submit" value="Submit Form" data-id="{{ foodid }}" data-name="{{ request.session.name }}">
-          </div>
-        </form>
-      </div>
-      {% endif %}
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-      <script src="{% static 'recipe/recipe_detail.js' %}"></script>
-      <script src="https://code.jquery.com/jquery-latest.js"></script>
-
-      
 {% endblock %}

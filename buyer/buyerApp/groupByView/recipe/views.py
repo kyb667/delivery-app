@@ -9,7 +9,10 @@ from datetime import datetime
 from django.core.serializers.json import DjangoJSONEncoder
 from django.template.loader import render_to_string
 import requests
+from buyerApp import common
+from firebase_admin import auth, db
 
+logger = common.getLogger()
 
 def index(request):
     return render(request, 'recipe/gallery.html')
@@ -39,24 +42,38 @@ def getRecipeTypes(request):
 
 
 def select(request):
-    if request.method == 'GET':
-        selectList = request.GET['selectList']
-        group = request.GET['group']
-        if selectList:
-            if group == 'recipetype':
-                recipeList = food.objects.filter(
-                    fooddetail=selectList).values()
+    """
+    get recipe list
+    """
+    try:
+        logger.info("select start")
+        recipeList = []
+        if request.method == 'GET':
+            selectList = request.GET['selectList']
+            group = request.GET['group']
+            if selectList:
+                if group == 'recipetype':
+                    recipeList = food.objects.filter(
+                        fooddetail=selectList).values()
+            # get all recipe
+            else:
+                recipeList = db.reference('/recipe').get()
+                # recipeList = food.objects.all().values()
+            recipeList = list(recipeList.values()) if recipeList else recipeList
+            return JsonResponse({'data': recipeList})
         else:
-            recipeList = food.objects.all().values()
-        recipeList = [dict(i) for i in recipeList]
-        return JsonResponse({'data': recipeList})
-    else:
-        if request.POST['name']:
-            valList = recipe.objects.filter(
-                food_name__foodname__icontains=request.POST['name']).values()
-            valList = [dict(i) for i in valList]
-            print(valList)
+            if request.POST['name']:
+                valList = recipe.objects.filter(
+                    food_name__foodname__icontains=request.POST['name']).values()
+                valList = [dict(i) for i in valList]
+                print(valList)
             return render(request, 'recipe/gallery.html', {'findList': valList})
+    except Exception as e:
+        logger.error(e)
+        return redirect('index')
+    finally:
+        logger.info("select end")
+
 
 
 def showRecipeDetail(request, recipename, id):

@@ -1,129 +1,142 @@
-{% extends "./order_mainpage.html" %}
-{% load static %}
-{% block cartindex %}
+{% extends "./order_mainpage.html" %} {% load static %} {% block cartindex %}
 <ul>
   <li><a href="{% url 'index' %}">Home</a></li>
   <li><a href="{% url 'order_home' %}">order</a></li>
 </ul>
-{% endblock %}
-{% block orderdetail %}
-<div class="content three_quarter"> 
+{% endblock %} {% block orderdetail %}
+<div class="content three_quarter">
   <!-- ################################################################################################ -->
   <h1>주문하실 상품</h1>
-  <p><a href="#">송장번호</a> 는 주문하시고 난 뒤 등록된 메일 또는 핸드폰으로 전송됩니다</p>
-  <p>저희 웹사이트는 주문대행업체이기때문에 <a href="#">배달관련사항</a> 은 판매자에게 문의해주세요</p>
+  <p>
+    <a href="#">송장번호</a> 는 주문하시고 난 뒤 등록된 메일 또는 핸드폰으로
+    전송됩니다
+  </p>
+  <p>
+    저희 웹사이트는 주문대행업체이기때문에 <a href="#">배달관련사항</a> 은
+    판매자에게 문의해주세요
+  </p>
   <p>기타 문의사항은 <a href="#">Q&A</a> 창을 이용해주시기 바랍니다</p>
-  <br/>
-      <div class="scrollable">
-        <table>
-          <thead>
-            <tr>
-              <th>상품명</th>
-              <th>품목</th>
-              <th>금액</th>
-              <th>개수</th>
-              <th>총액</th>
-              <th>상품수량변경</th>
-              <th>상품 제거</th>
-            </tr>
-          </thead>
-          <tbody class="order_cart_body">
-          </tbody>
-        </table>
-      </div>
-      <br/>
-      <div id="comments" class="order_version_btn">
-        {% if not request.session.name %}
-        <input type='submit' onclick="location.href='../login'" value='로그인 후 주문서 작성'> &nbsp; 
-        <input type='submit' id="order_by_unknown" value='비회원 주문서 작성'>
-        {% else %}
-        <input type='submit' id="order_by_user"  value='주문서 작성'> &nbsp; 
-        {% endif %}
-      </div>
-      <br/>
+  <br />
+  <div class="scrollable">
+    <table>
+      <thead>
+        <tr>
+          <th>상품명</th>
+          <th>품목</th>
+          <th>금액</th>
+          <th>개수</th>
+          <th>총액</th>
+          <th>상품수량변경</th>
+          <th>상품 제거</th>
+        </tr>
+      </thead>
+      <tbody class="order_cart_body"></tbody>
+    </table>
+  </div>
+  <br />
+  <div id="comments" class="order_version_btn">
+    {% if not request.COOKIES.session %}
+    <input
+      type="submit"
+      onclick="location.href='../login'"
+      value="로그인 후 주문서 작성"
+    />
+    &nbsp;
+    <input type="submit" id="order_by_unknown" value="비회원 주문서 작성" />
+    {% else %}
+    <input type="submit" id="order_by_user" value="주문서 작성" /> &nbsp; {%
+    endif %}
+  </div>
+  <br />
   <div id="comments">
-    <div id="order_form">
-    </div>
+    <div id="order_form"></div>
   </div>
   <div id="order_modal" class="order_modal">
     <div class="order-modal-content">
       <p><a>주문확인창</a></p>
       <p>총 <span id="cart_all_cnt"></span> 개의 상품을 주문하시겠습니까?</p>
       <div id="comments">
-        <input type='submit' id="order_product"  value='주문하기'> &nbsp; <input type='submit' id="close_order_modal" value='닫기'>
+        <input type="submit" id="order_product" value="주문하기" /> &nbsp;
+        <input type="submit" id="close_order_modal" value="닫기" />
       </div>
     </div>
   </div>
-  
+
   <!-- ################################################################################################ -->
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="{% static 'order/order_request.js' %}"></script>
-<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
-<script type="text/javascript" src="https://service.iamport.kr/js/iamport.payment-1.1.2.js"></script>
-  <style>
+<script
+  type="text/javascript"
+  src="https://code.jquery.com/jquery-1.12.4.min.js"
+></script>
+<script
+  type="text/javascript"
+  src="https://service.iamport.kr/js/iamport.payment-1.1.2.js"
+></script>
+<style>
   .order_modal {
     color: black;
-        display: none; /* Hidden by default */
-        position: fixed; /* Stay in place */
-        z-index: 1; /* Sit on top */
-        left: 0;
-        top: 0;
-        width: 100%; /* Full width */
-        height: 100%; /* Full height */
-        background-color: rgb(0,0,0); /* Fallback color */
-        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-    }
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    background-color: rgb(0, 0, 0); /* Fallback color */
+    background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+  }
 
-    /* Modal Content/Box */
-    .order-modal-content {
-      overflow: auto;/* Enable scroll if needed */
-        background-color: #fefefe;
-        margin: 15% auto; /* 15% from the top and centered */
-        padding: 1%;
-        border: 1px solid #888;
-        width: 50%; /* Could be more or less, depending on screen size */   
-        height: 50%;              
-    }
-  </style>
+  /* Modal Content/Box */
+  .order-modal-content {
+    overflow: auto; /* Enable scroll if needed */
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 1%;
+    border: 1px solid #888;
+    width: 50%; /* Could be more or less, depending on screen size */
+    height: 50%;
+  }
+</style>
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script>
-    function execDaumPostcode() {
-        new daum.Postcode({
-            oncomplete: function(data) {
-                var roadAddr = data.roadAddress;
-                var extraRoadAddr = '';
+  function execDaumPostcode() {
+    new daum.Postcode({
+      oncomplete: function (data) {
+        var roadAddr = data.roadAddress;
+        var extraRoadAddr = "";
 
-                if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
-                    extraRoadAddr += data.bname;
-                }
-                if(data.buildingName !== '' && data.apartment === 'Y'){
-                   extraRoadAddr += (extraRoadAddr !== '' ? ', ' + data.buildingName : data.buildingName);
-                }
-                if(extraRoadAddr !== ''){
-                    extraRoadAddr = ' (' + extraRoadAddr + ')';
-                }
+        if (data.bname !== "" && /[동|로|가]$/g.test(data.bname)) {
+          extraRoadAddr += data.bname;
+        }
+        if (data.buildingName !== "" && data.apartment === "Y") {
+          extraRoadAddr +=
+            extraRoadAddr !== "" ? ", " + data.buildingName : data.buildingName;
+        }
+        if (extraRoadAddr !== "") {
+          extraRoadAddr = " (" + extraRoadAddr + ")";
+        }
 
-                document.getElementById('order_postcode').value = data.zonecode;
-                document.getElementById("order_roadAddress").value = roadAddr;
-                document.getElementById("order_jibunAddress").value = data.jibunAddress;
+        document.getElementById("order_postcode").value = data.zonecode;
+        document.getElementById("order_roadAddress").value = roadAddr;
+        document.getElementById("order_jibunAddress").value = data.jibunAddress;
 
-                var guideTextBox = document.getElementById("guide");
-                if(data.autoRoadAddress) {
-                    var expRoadAddr = data.autoRoadAddress + extraRoadAddr;
-                    guideTextBox.innerHTML = '(예상 도로명 주소 : ' + expRoadAddr + ')';
-                    guideTextBox.style.display = 'block';
-
-                } else if(data.autoJibunAddress) {
-                    var expJibunAddr = data.autoJibunAddress;
-                    guideTextBox.innerHTML = '(예상 지번 주소 : ' + expJibunAddr + ')';
-                    guideTextBox.style.display = 'block';
-                } else {
-                    guideTextBox.innerHTML = '';
-                    guideTextBox.style.display = 'none';
-                }
-            }
-        }).open();
-    }
+        var guideTextBox = document.getElementById("guide");
+        if (data.autoRoadAddress) {
+          var expRoadAddr = data.autoRoadAddress + extraRoadAddr;
+          guideTextBox.innerHTML = "(예상 도로명 주소 : " + expRoadAddr + ")";
+          guideTextBox.style.display = "block";
+        } else if (data.autoJibunAddress) {
+          var expJibunAddr = data.autoJibunAddress;
+          guideTextBox.innerHTML = "(예상 지번 주소 : " + expJibunAddr + ")";
+          guideTextBox.style.display = "block";
+        } else {
+          guideTextBox.innerHTML = "";
+          guideTextBox.style.display = "none";
+        }
+      },
+    }).open();
+  }
 </script>
 {% endblock %}
